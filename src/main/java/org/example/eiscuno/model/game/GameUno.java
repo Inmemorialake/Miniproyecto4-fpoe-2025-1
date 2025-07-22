@@ -44,6 +44,12 @@ public class GameUno implements IGameUno {
                 machinePlayer.addCard(this.deck.takeCard());
             }
         }
+        // Seleccionar carta inicial que no sea especial
+        Card initialCard;
+        do {
+            initialCard = this.deck.takeCard();
+        } while (initialCard.isSpecial());
+        this.table.addCardOnTheTable(initialCard);
     }
 
     /**
@@ -110,5 +116,10 @@ public class GameUno implements IGameUno {
     @Override
     public Boolean isGameOver() {
         return null;
+    }
+
+    // Método para obtener la carta actual en la mesa
+    public Card getCurrentCardOnTable() {
+        return this.table.getCurrentCardOnTheTable();
     }
 }
