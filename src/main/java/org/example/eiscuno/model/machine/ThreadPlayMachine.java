@@ -65,6 +65,8 @@ public class ThreadPlayMachine extends Thread {
                         }
                         repeat = controller.isRepeatTurn();
                     } else {
+                        // Si repeatTurn era true (por reverse/skip), después de comer una carta, pon repeatTurn = false y pasa el turno
+                        repeat = false;
                         controller.passTurnToHuman();
                         break;
                     }

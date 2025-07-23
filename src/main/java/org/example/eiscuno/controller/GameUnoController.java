@@ -115,10 +115,16 @@ public class GameUnoController {
                     tableImageView.setImage(card.getImage());
                     humanPlayer.getCardsPlayer().remove(card);
                     printHumanPlayerCards();
-                    applySpecialCardEffect(card, true);
-                    if (!repeatTurn) {
-                        isHumanTurn = false;
-                        synchronized (turnLock) { turnLock.notifyAll(); }
+                    // Si la carta es comodín o +4, NO pasar el turno aquí, solo dentro del callback de chooseColorAfterWild
+                    if (card.isWildCard() || card.isPlusFour()) {
+                        applySpecialCardEffect(card, true);
+                        // No pasar el turno aquí
+                    } else {
+                        applySpecialCardEffect(card, true);
+                        if (!repeatTurn) {
+                            isHumanTurn = false;
+                            synchronized (turnLock) { turnLock.notifyAll(); }
+                        }
                     }
                 } else {
                     showInvalidMoveError();
@@ -214,10 +220,10 @@ public class GameUnoController {
                 e.printStackTrace();
             }
             javafx.application.Platform.runLater(() -> {
-                if (!repeatTurn) {
-                    isHumanTurn = false;
-                    synchronized (turnLock) { turnLock.notifyAll(); }
-                }
+                // Si repeatTurn era true (por reverse/skip), después de comer una carta, pon repeatTurn = false y cede el turno
+                repeatTurn = false;
+                isHumanTurn = false;
+                synchronized (turnLock) { turnLock.notifyAll(); }
             });
         }).start();
     }
@@ -354,16 +360,8 @@ public class GameUnoController {
         } else if (card.isPlusFour()) {
             repeatTurn = false;
             if (playedByHuman) {
-                gameUno.eatCard(machinePlayer, 4);
-                printMachinePlayerCards();
-                javafx.application.Platform.runLater(() -> {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("+4 jugado");
-                    alert.setHeaderText(null);
-                    alert.setContentText("La máquina toma 4 cartas.");
-                    alert.showAndWait();
-                });
-                chooseColorAfterWild(true);
+                // El humano juega +4, la máquina debe comer después de elegir el color
+                chooseColorAfterWild(true, true);
             } else {
                 gameUno.eatCard(humanPlayer, 4);
                 javafx.application.Platform.runLater(this::printHumanPlayerCards);
@@ -374,10 +372,9 @@ public class GameUnoController {
                     alert.setContentText("Debes tomar 4 cartas.");
                     alert.showAndWait();
                 });
-                chooseColorAfterWild(false);
+                chooseColorAfterWild(false, false);
             }
         } else if (card.isSpecial() && card.isSkipOrReverse()) {
-            // Saltar turno o reversa: el oponente pierde turno, jugador repite
             repeatTurn = true;
             boolean isReverse = card.getUrl().toLowerCase().contains("reverse");
             if (playedByHuman) {
@@ -416,13 +413,20 @@ public class GameUnoController {
             }
         } else if (card.isWildCard()) {
             repeatTurn = false;
-            chooseColorAfterWild(playedByHuman);
+            if (playedByHuman) {
+                // El humano juega comodín, la máquina debe esperar la selección de color
+                chooseColorAfterWild(true, false);
+                // El turno se pasa a la máquina solo después de elegir el color (dentro del callback)
+            } else {
+                chooseColorAfterWild(false, false);
+            }
         } else {
             repeatTurn = false;
         }
     }
 
-    private void chooseColorAfterWild(boolean playedByHuman) {
+    // Nuevo método para manejar el flujo tras +4 y comodín
+    private void chooseColorAfterWild(boolean playedByHuman, boolean isPlusFour) {
         if (playedByHuman) {
             javafx.application.Platform.runLater(() -> {
                 ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", Arrays.asList("ROJO", "VERDE", "AZUL", "AMARILLO"));
@@ -439,7 +443,19 @@ public class GameUnoController {
                     } catch (Exception e) { e.printStackTrace(); }
                     tableImageView.setImage(topCard.getImage());
                     updateCurrentColorUI();
-                    // Solo pasar el turno a la máquina después de elegir el color y si repeatTurn es false
+                    // Si es +4, la máquina come después de elegir el color
+                    if (isPlusFour) {
+                        gameUno.eatCard(machinePlayer, 4);
+                        printMachinePlayerCards();
+                        javafx.application.Platform.runLater(() -> {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("+4 jugado");
+                            alert.setHeaderText(null);
+                            alert.setContentText("La máquina toma 4 cartas.");
+                            alert.showAndWait();
+                        });
+                    }
+                    // Para comodín y +4: solo pasar el turno a la máquina después de elegir el color y si repeatTurn es false
                     if (!repeatTurn) {
                         isHumanTurn = false;
                         synchronized (turnLock) { turnLock.notifyAll(); }
