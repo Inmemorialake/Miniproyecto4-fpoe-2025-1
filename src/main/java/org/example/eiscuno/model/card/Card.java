@@ -74,19 +74,19 @@ public class Card {
             }
             // +2 can be played if color matches or top card is +2
             if (this.isPlusTwo()) {
-                return this.color != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isPlusTwo());
+                return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isPlusTwo());
             }
             // Skip or Reverse: can be played if color matches
             if (this.isSkipOrReverse()) {
-                return this.color != null && this.color.equalsIgnoreCase(topCard.getColor());
+                return this.color != null && topCard.getColor() != null && this.color.equalsIgnoreCase(topCard.getColor());
             }
             // Number cards: can be played if color or value matches
             if (this.value != null && this.value.matches("[0-9]+")) {
-                return this.color != null && (this.color.equalsIgnoreCase(topCard.getColor())
-                        || (this.value != null && this.value.equalsIgnoreCase(topCard.getValue())));
+                return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor())
+                        || (topCard.getValue() != null && this.value.equalsIgnoreCase(topCard.getValue())));
             }
             // Default: only color match
-            return this.color != null && this.color.equalsIgnoreCase(topCard.getColor());
+            return this.color != null && topCard.getColor() != null && this.color.equalsIgnoreCase(topCard.getColor());
         } catch (Exception e) {
             // If any error, move is not valid
             return false;
