@@ -30,7 +30,7 @@ public class Deck {
                     cardEnum.name().startsWith("BLUE_") ||
                     cardEnum.name().startsWith("RED_") ||
                     cardEnum.name().startsWith("SKIP_") ||
-                    cardEnum.name().startsWith("RESERVE_") ||
+                    cardEnum.name().startsWith("REVERSE_") ||
                     cardEnum.name().startsWith("TWO_WILD_DRAW_") ||
                     cardEnum.name().equals("FOUR_WILD_DRAW") ||
                     cardEnum.name().equals("WILD")) {
@@ -69,13 +69,13 @@ public class Deck {
     }
 
     private String getCardColor(String name){
-        if(name.startsWith("GREEN")){
+        if(name.contains("GREEN")){
             return "GREEN";
-        } else if(name.startsWith("YELLOW")){
+        } else if(name.contains("YELLOW")){
             return "YELLOW";
-        } else if(name.startsWith("BLUE")){
+        } else if(name.contains("BLUE")){
             return "BLUE";
-        } else if(name.startsWith("RED")){
+        } else if(name.contains("RED")){
             return "RED";
         } else {
             return null;

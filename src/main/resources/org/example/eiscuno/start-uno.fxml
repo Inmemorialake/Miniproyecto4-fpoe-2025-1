@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.StartController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="400.0" prefWidth="166.0" spacing="10.0" style="-fx-background-color: red;">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
+            <Button mnemonicParsing="false" text="Jugar" onAction="#handleButtonClicked" />
+            <Button mnemonicParsing="false" text="Continuar" />
+            <Button mnemonicParsing="false" text="Button" />
+         </children>
+      </VBox>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/uno.png" />
+         </image>
+      </ImageView>
+   </children>
+</HBox>
