@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -11,18 +12,26 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: orange;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.GameUnoController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: orange;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.GameUnoController">
    <left>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="50.0" layoutY="30.0" mnemonicParsing="false" onAction="#onHandleTakeCard" prefHeight="149.0" prefWidth="100.0" text="Baraja" />
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="39.0" layoutY="36.0" onMouseClicked="#onHandleTakeCard" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@cards-uno/deck_of_cards.png" />
+               </image>
+            </ImageView>
          </children>
       </Pane>
    </left>
    <right>
-      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <Pane onMouseClicked="#onHandleUno" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="50.0" layoutY="75.0" mnemonicParsing="false" onAction="#onHandleUno" prefHeight="50.0" prefWidth="100.0" text="UNO" />
+            <ImageView fitHeight="87.0" fitWidth="149.0" layoutX="42.0" layoutY="64.0" onMouseClicked="#onHandleUno" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/button_uno.png" />
+               </image>
+            </ImageView>
          </children>
       </Pane>
    </right>
@@ -30,14 +39,17 @@
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <ImageView fx:id="tableImageView" fitHeight="149.0" fitWidth="100.0" layoutX="50.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="labelCurrentColor" layoutX="50.0" layoutY="190.0" text="Current color: -" />
          </children>
       </Pane>
    </center>
    <top>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="EISC Uno" textFill="RED">
+            <Label fx:id="labelCurrentColor" onMouseClicked="#onHandleUno" prefHeight="22.0" prefWidth="121.0" text="Current color: -">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+            <Label textFill="RED">
                <font>
                   <Font name="Berlin Sans FB Bold" size="18.0" />
                </font>

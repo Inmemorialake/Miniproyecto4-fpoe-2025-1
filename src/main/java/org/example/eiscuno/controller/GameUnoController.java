@@ -196,7 +196,7 @@ public class GameUnoController {
      * @param event the action event
      */
     @FXML
-    void onHandleTakeCard(ActionEvent event) {
+    void onHandleTakeCard(MouseEvent event) {
         if (!isHumanTurn) {
             showTurnError();
             return;
@@ -234,7 +234,7 @@ public class GameUnoController {
      * @param event the action event
      */
     @FXML
-    void onHandleUno(ActionEvent event) {
+    void onHandleUno(MouseEvent event) {
         // Implement logic to handle Uno event here
     }
 
@@ -482,7 +482,7 @@ public class GameUnoController {
         Card topCard = gameUno.getCurrentCardOnTable();
         String color = topCard.getColor();
         if (color == null) color = "-";
-        labelCurrentColor.setText("Color actual: " + color);
+        labelCurrentColor.setText("Color actual: "+color);
     }
 
     public boolean isRepeatTurn() {
