@@ -160,7 +160,22 @@ public class GameHandler implements Serializable {
             } else {
                 humanPlayer.addCards(deck.takeCards(2));
             }
+
+            DialogManager.showInfoDialog("+2 Jugado", "Se repite el turno!");
+            GamePauseManager.getInstance().pauseGame();
+
         } else if (card.isPlusFour() || card.isWildCard()) {
+            if(playedByHuman) {
+                machinePlayer.addCards(deck.takeCards(4));
+            } else {
+                humanPlayer.addCards(deck.takeCards(4));
+            }
+
+            if(card.isPlusFour()) {
+                DialogManager.showInfoDialog("+4 Jugado", "Se repite el turno!");
+                GamePauseManager.getInstance().pauseGame();
+            }
+
             String newColor = "RED"; // por defecto
 
             if (playedByHuman && colorChooser != null) {
@@ -172,6 +187,9 @@ public class GameHandler implements Serializable {
             }
 
             card.setColor(newColor);
+        } else if(card.isSkipOrReverse()) {
+            DialogManager.showInfoDialog("Skip / Block jugado", "Se repite el turno!");
+            GamePauseManager.getInstance().pauseGame();
         }
 
         if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {

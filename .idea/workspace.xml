@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
+    <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="IA now follow the rules like a good citizen instead of playing all his cards at once xD">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/DialogManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java" afterDir="false" />
     </list>
     <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -170,7 +172,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753835670115</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="IA now follow the rules like a good citizen instead of playing all his cards at once xD">
+      <option name="closed" value="true" />
+      <created>1753915711943</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1753915711943</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,7 +188,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management" />
-    <option name="LAST_COMMIT_MESSAGE" value="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management" />
+    <MESSAGE value="IA now follow the rules like a good citizen instead of playing all his cards at once xD" />
+    <option name="LAST_COMMIT_MESSAGE" value="IA now follow the rules like a good citizen instead of playing all his cards at once xD" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

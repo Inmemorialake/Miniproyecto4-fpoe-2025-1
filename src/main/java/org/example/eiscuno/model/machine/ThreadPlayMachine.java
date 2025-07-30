@@ -43,10 +43,6 @@ public class ThreadPlayMachine extends Thread {
         if (cardToPlay != null) {
             playCard(cardToPlay);
 
-            if (gameHandler.getMachinePlayer().getCardsPlayer().size() == 1 && !gameHandler.getIASaidUno()) {
-                handleMachineUno();
-            }
-
             gameHandler.checkWinner();
         } else {
             Card drawn = gameHandler.getDeck().takeCard();
@@ -85,27 +81,6 @@ public class ThreadPlayMachine extends Thread {
                 gameHandler.getHumanPlayer().getCardsPlayer().forEach(Card::restoreVisuals);
             }
         });
-    }
-
-    private void handleMachineUno() {
-        new Thread(() -> {
-            sleepSafely(2000 + new Random().nextInt(2000));
-            GamePauseManager.getInstance().waitIfPaused();
-
-            Platform.runLater(() -> {
-                if (!gameHandler.getHumanSaidUno()) {
-                    gameHandler.setIASaidUno(true);
-                    GamePauseManager.getInstance().pauseGame();
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("¡UNO!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("La máquina ha gritado ¡UNO!");
-                    alert.setOnHidden(e -> GamePauseManager.getInstance().resumeGame());
-                    alert.showAndWait();
-                }
-            });
-        }).start();
     }
 
     private void sleepSafely(long millis) {

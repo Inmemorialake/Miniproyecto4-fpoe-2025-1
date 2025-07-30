@@ -2,6 +2,7 @@ package org.example.eiscuno.model.machine;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import org.example.eiscuno.model.common.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 
@@ -12,6 +13,9 @@ public class ThreadUnoCallout extends Thread {
     private final GameHandler gameHandler;
     private final Consumer<Boolean> showUnoButtonCallback; // true = mostrar, false = ocultar
     private volatile boolean running = true;
+
+    private boolean humanUnoHandled = false;
+    private boolean iaUnoHandled = false;
 
     public ThreadUnoCallout(GameHandler gameHandler, Consumer<Boolean> showUnoButtonCallback) {
         this.gameHandler = gameHandler;
@@ -26,17 +30,21 @@ public class ThreadUnoCallout extends Thread {
             int humanCards = gameHandler.getHumanPlayer().getCardsPlayer().size();
             int iaCards = gameHandler.getMachinePlayer().getCardsPlayer().size();
 
-            // Si alguien tiene más de una carta, se reinician los flags
-            if (humanCards > 1 && gameHandler.getHumanSaidUno()) {
+            // RESET FLAGS si ya no tienen una sola carta
+            if (humanCards > 1) {
                 gameHandler.setHumanSaidUno(false);
+                humanUnoHandled = false;
+                Platform.runLater(() -> showUnoButtonCallback.accept(false));
             }
 
-            if (iaCards > 1 && gameHandler.getIASaidUno()) {
+            if (iaCards > 1) {
                 gameHandler.setIASaidUno(false);
+                iaUnoHandled = false;
             }
 
-            // Si el humano tiene 1 carta y no ha dicho UNO, mostrar botón y esperar penalización
-            if (humanCards == 1 && !gameHandler.getHumanSaidUno()) {
+            // --- HUMANO ---
+            if (humanCards == 1 && !gameHandler.getHumanSaidUno() && !humanUnoHandled) {
+                humanUnoHandled = true;
                 Platform.runLater(() -> showUnoButtonCallback.accept(true));
 
                 new Thread(() -> {
@@ -46,24 +54,17 @@ public class ThreadUnoCallout extends Thread {
 
                         if (!gameHandler.getHumanSaidUno() && gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {
                             gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);
-                            Platform.runLater(() -> {
-                                GamePauseManager.getInstance().pauseGame();
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("¡UNO no declarado!");
-                                alert.setHeaderText(null);
-                                alert.setContentText("¡Olvidaste gritar UNO! Tomas 1 carta como penalización.");
-                                alert.setOnHidden(e -> GamePauseManager.getInstance().resumeGame());
-                                alert.showAndWait();
-                            });
+                            DialogManager.showInfoDialog("¡La IA te dijo UNO!", "¡La IA te gritó UNO! Tomas 1 carta como penalización.");
+                            GamePauseManager.getInstance().pauseGame();
                         }
                     } catch (InterruptedException ignored) {}
                 }).start();
-            } else {
-                Platform.runLater(() -> showUnoButtonCallback.accept(false));
             }
 
-            // Si la IA tiene 1 carta y no ha dicho UNO, hacer que lo diga en 2-4 segundos
-            if (iaCards == 1 && !gameHandler.getIASaidUno()) {
+            // --- IA ---
+            if (iaCards == 1 && !gameHandler.getIASaidUno() && !iaUnoHandled) {
+                iaUnoHandled = true;
+
                 new Thread(() -> {
                     try {
                         Thread.sleep(2000 + new Random().nextInt(2000));
@@ -71,22 +72,15 @@ public class ThreadUnoCallout extends Thread {
 
                         if (!gameHandler.getIASaidUno() && gameHandler.getMachinePlayer().getCardsPlayer().size() == 1) {
                             gameHandler.setIASaidUno(true);
-                            Platform.runLater(() -> {
-                                GamePauseManager.getInstance().pauseGame();
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("¡UNO!");
-                                alert.setHeaderText(null);
-                                alert.setContentText("¡La máquina ha gritado UNO!");
-                                alert.setOnHidden(e -> GamePauseManager.getInstance().resumeGame());
-                                alert.showAndWait();
-                            });
+                            DialogManager.showInfoDialog("¡UNO!", "¡La IA gritó UNO!");
+                            GamePauseManager.getInstance().pauseGame();
                         }
                     } catch (InterruptedException ignored) {}
                 }).start();
             }
 
             try {
-                Thread.sleep(500); // chequeo cada 0.5 segundos
+                Thread.sleep(500);
             } catch (InterruptedException ignored) {}
         }
     }

@@ -15,6 +15,7 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 import org.example.eiscuno.model.card.Card;
+import org.example.eiscuno.model.common.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 import org.example.eiscuno.model.common.PlayerStatsManager;
@@ -88,10 +89,6 @@ public class GameUnoController {
         t.start();
         Thread s = new Thread(threadPlayMachine, "ThreadPlayMachine");
         s.start();
-
-        Timeline unoCheckTimeline = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> checkUnoConditions()));
-        unoCheckTimeline.setCycleCount(Animation.INDEFINITE);
-        unoCheckTimeline.play();
     }
 
     private void initVariables() {
@@ -173,7 +170,6 @@ public class GameUnoController {
             CountDownLatch latch = new CountDownLatch(1);
 
             Platform.runLater(() -> {
-                GamePauseManager.getInstance().pauseGame(); // si lo usas
                 ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", Arrays.asList("ROJO", "VERDE", "AZUL", "AMARILLO"));
                 dialog.setTitle("Cambio de color");
                 dialog.setHeaderText(null);
@@ -186,6 +182,8 @@ public class GameUnoController {
                 dialog.showAndWait().ifPresent(color -> selectedColor[0] = COLOR_MAP.getOrDefault(color.toUpperCase(), color.toUpperCase()));
                 latch.countDown();
             });
+
+            GamePauseManager.getInstance().pauseGame(); // si lo usas
 
             try {
                 latch.await(); // bloquea hasta que el usuario seleccione
@@ -216,10 +214,15 @@ public class GameUnoController {
     void onHandleUno(ActionEvent event) {
         if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1 && !gameHandler.getHumanSaidUno()) {
             gameHandler.setHumanSaidUno(true);
-            showAlert("UNO declarado", "¡Has declarado UNO correctamente!");
-        } else if (gameHandler.getMachinePlayer().getCardsPlayer().size() == 1 && !gameHandler.getIASaidUno()) {
+            DialogManager.showInfoDialog("UNO declarado", "¡Has declarado UNO correctamente!");
+            GamePauseManager.getInstance().pauseGame();
+            return;
+        }
+        if (gameHandler.getMachinePlayer().getCardsPlayer().size() == 1 && !gameHandler.getIASaidUno()) {
             gameHandler.eatCard(gameHandler.getMachinePlayer(), 1);
-            showAlert("UNO callout a la máquina", "¡La máquina no dijo UNO! Le has hecho comer una carta.");
+            DialogManager.showInfoDialog("UNO callout a la máquina", "¡La máquina no dijo UNO! Le has hecho comer una carta.");
+            GamePauseManager.getInstance().pauseGame();
+            return;
         }
     }
 
@@ -228,53 +231,19 @@ public class GameUnoController {
         labelCurrentColor.setText("Color actual: " + (color != null ? color : "-"));
     }
 
-    private void startUnoTimerForHuman() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ignored) {}
-            if (!gameHandler.getHumanSaidUno() && gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {
-                Platform.runLater(() -> {
-                    showAlert("¡No dijiste UNO!", "La máquina notó que no dijiste UNO. Comes una carta.");
-                    gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);
-                    unoButton.setVisible(false);
-                    printHumanPlayerCards();
-                });
-            }
-        }).start();
-    }
-
-    private void checkUnoConditions() {
-        int humanCards = gameHandler.getHumanPlayer().getCardsPlayer().size();
-        int machineCards = gameHandler.getMachinePlayer().getCardsPlayer().size();
-
-        boolean shouldShowButton = (humanCards == 1 && !gameHandler.getHumanSaidUno()) ||
-                (machineCards == 1 && !gameHandler.getIASaidUno());
-
-        Platform.runLater(() -> unoButton.setVisible(shouldShowButton));
-
-        if (humanCards > 1 && gameHandler.getHumanSaidUno()) gameHandler.setHumanSaidUno(false);
-        if (machineCards > 1 && gameHandler.getIASaidUno()) gameHandler.setIASaidUno(false);
-    }
-
     private void showTurnError() {
-        showAlert("Turno incorrecto", "No es tu turno. Espera a que la máquina juegue.");
+        DialogManager.showInfoDialog("Turno incorrecto", "No es tu turno. Espera a que la máquina juegue.");
+        GamePauseManager.getInstance().pauseGame();
     }
 
     private void showInvalidMoveError() {
-        showAlert("Jugada inválida", "No puedes jugar esa carta. Debe coincidir en color, número o símbolo con la carta de la mesa.");
+        DialogManager.showInfoDialog("Jugada inválida", "No puedes jugar esa carta. Debe coincidir en color, número o símbolo con la carta de la mesa.");
+        GamePauseManager.getInstance().pauseGame();
     }
 
     private void showInvalidTryToTakeCardError(){
-        showAlert("Intento inválido", "No puedes tomar una carta si tienes cartas jugables. Juega una carta primero.");
-    }
-
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+        DialogManager.showInfoDialog("Intento inválido", "No puedes tomar una carta si tienes cartas jugables. Juega una carta primero.");
+        GamePauseManager.getInstance().pauseGame();
     }
 
     public void saveGame() {
