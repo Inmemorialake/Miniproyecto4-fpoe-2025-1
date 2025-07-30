@@ -23,16 +23,19 @@ public class GameUnoStage extends Stage {
         Parent root;
         try {
             root = loader.load();
+            System.out.println("La mamasita se carga en el root");
         } catch (IOException e) {
             // Re-throwing the caught IOException
             throw new IOException("Error while loading FXML file", e);
         }
         Scene scene = new Scene(root);
+        System.out.println("La mamasita se crea dentro de una nueva escena");
         // Configuring the stage
         setTitle("EISC Uno"); // Sets the title of the stage
         setScene(scene); // Sets the scene for the stage
         setResizable(false); // Disallows resizing of the stage
         show(); // Displays the stage
+        System.out.println("La mamasita se muestra");
     }
 
     /**

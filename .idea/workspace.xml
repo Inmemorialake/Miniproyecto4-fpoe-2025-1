@@ -5,18 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
-      <change afterPath="$PROJECT_DIR$/.idea/intellij-javadocs-4.0.1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/HomeUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/HomeUnoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/card/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/card/Card.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameState.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/deck/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/deck/Deck.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/player/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/player/Player.java" afterDir="false" />
     </list>
-    <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="" />
+    <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,6 +50,19 @@
     "accountId": "a62c2782-9bde-4235-982b-f23d796ac6bc"
   }
 }]]></component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java">
+      <ranges>
+        <range start1="65" end1="65" start2="65" end2="66" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="66" end1="66" start2="67" end2="68" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="67" end1="67" start2="69" end2="70" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="69" end1="69" start2="72" end2="73" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="71" end1="71" start2="75" end2="76" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="76" end1="76" start2="81" end2="85" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="77" end1="81" start2="86" end2="87" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+      </ranges>
+    </file>
+  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -73,7 +82,7 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "Application.HelloApplication.executor": "Run",
-    "Application.Main.executor": "Debug",
+    "Application.Main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
@@ -165,7 +174,7 @@
       <workItem from="1753223210888" duration="9303000" />
       <workItem from="1753820690118" duration="14462000" />
       <workItem from="1753837844032" duration="14646000" />
-      <workItem from="1753902616059" duration="1651000" />
+      <workItem from="1753902616059" duration="3552000" />
     </task>
     <task id="LOCAL-00001" summary="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
       <option name="closed" value="true" />

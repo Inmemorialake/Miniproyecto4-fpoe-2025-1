@@ -63,22 +63,28 @@ public class GameUnoController {
 
     @FXML
     public void initialize() {
+        System.out.println("funka");
         initVariables();
+        System.out.println("funka");
         printHumanPlayerCards();
+        System.out.println("funka");
         if (!gameHandler.getTable().getCards().isEmpty()) {
             tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
+            System.out.println("fakun");
         }
         startThreads();
+        System.out.println("funka");
     }
 
     public void startThreads() {
         threadSingUNOMachine = new ThreadSingUNOMachine(gameHandler.getHumanPlayer().getCardsPlayer());
         threadPlayMachine = new ThreadPlayMachine(gameHandler.getTable(), gameHandler.getMachinePlayer(), tableImageView, gameHandler, gameHandler.getDeck());
+        Thread t = new Thread(threadSingUNOMachine, "ThreadSingUNO");
+        t.start();
+        Thread s = new Thread(threadPlayMachine, "ThreadPlayMachine");
+        s.start();
 
-        threadSingUNOMachine.run();
-        threadPlayMachine.start();
-
-        Timeline unoCheckTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> checkUnoConditions()));
+        Timeline unoCheckTimeline = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> checkUnoConditions()));
         unoCheckTimeline.setCycleCount(Animation.INDEFINITE);
         unoCheckTimeline.play();
     }
