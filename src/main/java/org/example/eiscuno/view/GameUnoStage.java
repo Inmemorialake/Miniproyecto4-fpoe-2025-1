@@ -1,5 +1,6 @@
 package org.example.eiscuno.view;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -33,6 +34,12 @@ public class GameUnoStage extends Stage {
         setScene(scene); // Sets the scene for the stage
         setResizable(false); // Disallows resizing of the stage
         show(); // Displays the stage
+
+        this.setOnCloseRequest(event -> {
+            System.out.println("Aplicación cerrada. Limpiando recursos...");
+            Platform.exit(); // Asegura cierre de JavaFX
+            System.exit(0);  // Asegura cierre total
+        });
     }
 
     /**

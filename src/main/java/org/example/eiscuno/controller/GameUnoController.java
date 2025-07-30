@@ -6,7 +6,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -20,12 +20,10 @@ import org.example.eiscuno.model.machine.ThreadPlayMachine;
 import org.example.eiscuno.model.machine.ThreadSingUNOMachine;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceDialog;
 
 import java.io.*;
 import java.util.Arrays;
-import javafx.scene.control.Label;
+import java.util.Optional;
 
 /**
  * Controller class for the Uno game.
@@ -330,6 +328,21 @@ public class GameUnoController {
         }
 
         unoButton.setVisible(false);
+    }
+
+    @FXML
+    void onHandleExit(ActionEvent event) {
+        // Confirmación opcional
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmación");
+        alert.setHeaderText("¿Salir del juego?");
+        alert.setContentText("¿Estás seguro de que deseas salir?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Platform.exit(); // Cierra JavaFX completamente
+            System.exit(0);  // Asegura que la VM se cierre
+        }
     }
 
     public void makeUnoButtonVisible(){

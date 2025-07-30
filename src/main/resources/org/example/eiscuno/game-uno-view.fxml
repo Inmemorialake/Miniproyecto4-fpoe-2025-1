@@ -53,7 +53,7 @@
                   <RowConstraints />
                </rowConstraints>
             </GridPane>
-            <Button mnemonicParsing="false" text="Salir" />
+             <Button fx:id="btnSalir" mnemonicParsing="false" text="Salir" onAction="#onHandleExit" />
          </children>
       </HBox>
    </top>
