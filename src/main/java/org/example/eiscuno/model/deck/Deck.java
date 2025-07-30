@@ -134,4 +134,21 @@ public class Deck implements Serializable {
             return null;
         }
     }
+
+    /**
+     * Takes a specified number of cards from the deck.
+     * @param i the number of cards to take.
+     * @return a list of taken cards.
+     */
+    public Object takeCards(int i) {
+        List<Card> takenCards = new ArrayList<>();
+        for (int j = 0; j < i; j++) {
+            if (!deckOfCards.isEmpty()) {
+                takenCards.add(deckOfCards.pop());
+            } else {
+                throw new IllegalStateException("El mazo está vacío y no hay forma de reponerlo.");
+            }
+        }
+        return takenCards;
+    }
 }
