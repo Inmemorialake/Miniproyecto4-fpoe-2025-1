@@ -1,11 +1,15 @@
 package org.example.eiscuno.model.machine;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
 import org.example.eiscuno.controller.GameUnoController;
 import org.example.eiscuno.model.deck.Deck;
+
+import java.util.Random;
 
 public class ThreadPlayMachine extends Thread {
     private Table table;
@@ -14,6 +18,8 @@ public class ThreadPlayMachine extends Thread {
     private volatile boolean hasPlayerPlayed;
     private GameUnoController controller;
     private Deck deck;
+    private Boolean iaSaidUno = false;
+    private Boolean running = true;
 
     public ThreadPlayMachine(Table table, Player machinePlayer, ImageView tableImageView, GameUnoController controller, Deck deck) {
         this.table = table;
@@ -24,7 +30,9 @@ public class ThreadPlayMachine extends Thread {
     }
 
     public void run() {
-        while (true) {
+        while (running) {
+            if (!running) break; //Cositas, no tocar xD
+
             controller.waitForMachineTurn();
             boolean repeat;
             do {
@@ -47,10 +55,34 @@ public class ThreadPlayMachine extends Thread {
                     machinePlayer.getCardsPlayer().remove(cardToPlay);
                     controller.updateTable(cardToPlay);
                     controller.applySpecialCardEffect(cardToPlay, false);
+
                     if (cardToPlay.isPlusTwo() || cardToPlay.isPlusFour()) {
                         javafx.application.Platform.runLater(() -> controller.printHumanPlayerCards());
                     }
                     repeat = controller.isRepeatTurn();
+
+                    // Si la maquina se queda con una sola carta, hacemos la secuencia para que cante uno
+                    if (machinePlayer.getCardsPlayer().size() == 1 && !iaSaidUno) {
+                        controller.makeUnoButtonVisible();
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(2000 + new Random().nextInt(2000)); // 2 a 4 seg
+                            } catch (InterruptedException ignored) {}
+                            Platform.runLater(() -> {
+                                iaSaidUno = true;
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("¡UNO!");
+                                alert.setHeaderText(null);
+                                alert.setContentText("La máquina ha gritado ¡UNO!");
+                                controller.makeUnoButtonInvisible();
+                                alert.showAndWait();
+                            });
+                        }).start();
+                    }
+
+                    //Checkeamos si ha ganado despues de haber hecho la jugada
+                    controller.checkWinner();
+
                 } else {
                     // No valid card to play, draw a card
                     Card drawn = deck.takeCard();
@@ -88,4 +120,14 @@ public class ThreadPlayMachine extends Thread {
     public void setHasPlayerPlayed(boolean hasPlayerPlayed) {
         this.hasPlayerPlayed = hasPlayerPlayed;
     }
+
+    public Boolean getIASaidUno() {
+        return iaSaidUno;
+    }
+
+    public void stopThread(){
+        running = false;
+    }
+
+    public void setIASaidUno(boolean iaSaidUno) { this.iaSaidUno = iaSaidUno; }
 }

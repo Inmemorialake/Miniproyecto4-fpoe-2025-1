@@ -2,10 +2,12 @@ package org.example.eiscuno.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import org.example.eiscuno.model.card.Card;
+import org.example.eiscuno.model.common.PlayerStatsManager;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.game.GameUno;
 import org.example.eiscuno.model.machine.ThreadPlayMachine;
@@ -13,7 +15,6 @@ import org.example.eiscuno.model.machine.ThreadSingUNOMachine;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
 import javafx.scene.control.Alert;
-import java.util.Random;
 import javafx.scene.control.ChoiceDialog;
 import java.util.Arrays;
 import javafx.scene.control.Label;
@@ -35,6 +36,12 @@ public class GameUnoController {
     @FXML
     private Label labelCurrentColor;
 
+    @FXML
+    private Button unoButton;
+
+    private boolean humanSaidUno = false;
+    private boolean iaSaidUno = false;
+
     private Player humanPlayer;
     private Player machinePlayer;
     private Deck deck;
@@ -47,6 +54,8 @@ public class GameUnoController {
 
     private ThreadSingUNOMachine threadSingUNOMachine;
     private ThreadPlayMachine threadPlayMachine;
+
+    private int cardsPlayedByHuman = 0; //To make the csv :)
 
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
@@ -112,20 +121,30 @@ public class GameUnoController {
                 Card topCard = gameUno.getCurrentCardOnTable();
                 if (card.canBePlayedOn(topCard)) {
                     gameUno.playCard(card);
+                    cardsPlayedByHuman++; //OMG
                     tableImageView.setImage(card.getImage());
                     humanPlayer.getCardsPlayer().remove(card);
                     printHumanPlayerCards();
+
                     // Si la carta es comodín o +4, NO pasar el turno aquí, solo dentro del callback de chooseColorAfterWild
-                    if (card.isWildCard() || card.isPlusFour()) {
-                        applySpecialCardEffect(card, true);
-                        // No pasar el turno aquí
-                    } else {
-                        applySpecialCardEffect(card, true);
-                        if (!repeatTurn) {
-                            isHumanTurn = false;
-                            synchronized (turnLock) { turnLock.notifyAll(); }
-                        }
+                    applySpecialCardEffect(card, true);
+                    if (!(card.isWildCard() || card.isPlusFour()) && !repeatTurn) {
+                        isHumanTurn = false;
+                        synchronized (turnLock) { turnLock.notifyAll(); }
                     }
+
+                    // Si el humano se queda con una sola carta, empezamos la secuencia para decir uno
+                    if (humanPlayer.getCardsPlayer().size() == 1) {
+                        unoButton.setVisible(true);
+                        humanSaidUno = false;
+                        startUnoTimerForHuman();
+                    } else {
+                        unoButton.setVisible(false);
+                    }
+
+                    // Hacemos el check por si el jugador ha ganado
+                    checkWinner();
+
                 } else {
                     showInvalidMoveError();
                 }
@@ -235,7 +254,36 @@ public class GameUnoController {
      */
     @FXML
     void onHandleUno(ActionEvent event) {
-        // Implement logic to handle Uno event here
+        if (humanPlayer.getCardsPlayer().size() == 1) {
+            humanSaidUno = true;
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("UNO declarado");
+            alert.setHeaderText(null);
+            alert.setContentText("¡Has declarado UNO correctamente!");
+            alert.showAndWait();
+        }
+        if (machinePlayer.getCardsPlayer().size() == 1 && threadPlayMachine.getIASaidUno() == false) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("UNO cantado a la IA!");
+            alert.setHeaderText(null);
+            alert.setContentText("Has cantado correctamente UNO! a la maquina, ahora comerá una carta.");
+            gameUno.eatCard(machinePlayer, 1);
+            threadPlayMachine.setIASaidUno(false); // reset por si vuelve a tener 1 carta
+            printMachinePlayerCards();
+            alert.showAndWait();
+        }
+
+        unoButton.setVisible(false);
+    }
+
+    public void makeUnoButtonVisible(){
+        unoButton.setVisible(true);
+    }
+
+    public void makeUnoButtonInvisible(){
+        if(humanPlayer.getCardsPlayer().size() != 1 && !humanSaidUno){
+            unoButton.setVisible(false);
+        }
     }
 
     // Mostrar mensaje de error si la jugada no es válida
@@ -487,5 +535,51 @@ public class GameUnoController {
 
     public boolean isRepeatTurn() {
         return repeatTurn;
+    }
+
+    private void startUnoTimerForHuman() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000); // 3 segundos para decir UNO
+            } catch (InterruptedException ignored) {}
+            if (!humanSaidUno && humanPlayer.getCardsPlayer().size() == 1) {
+                javafx.application.Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("¡No dijiste UNO!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("La máquina notó que no dijiste UNO. Comes una carta.");
+                    alert.showAndWait();
+                    gameUno.eatCard(humanPlayer, 1);
+                    unoButton.setVisible(false);
+                    printHumanPlayerCards();
+                });
+            }
+        }).start();
+    }
+
+    public void checkWinner() {
+        if (humanPlayer.getCardsPlayer().isEmpty()) {
+            showWinner(true);
+        } else if (machinePlayer.getCardsPlayer().isEmpty()) {
+            showWinner(false);
+        }
+
+    }
+
+    private void showWinner(boolean playerWon) {
+        javafx.application.Platform.runLater(() -> {
+            String mensaje = playerWon
+                    ? "¡Has ganado la partida! ¡Bien hecho!"
+                    : "😓 La máquina ha ganado. ¡Suerte la próxima!";
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Fin del juego");
+            alert.setHeaderText(null);
+            alert.setContentText(mensaje);
+            alert.showAndWait();
+
+            threadPlayMachine.stopThread();
+            PlayerStatsManager.updateStats(playerWon, cardsPlayedByHuman);
+            System.exit(0);
+        });
     }
 }

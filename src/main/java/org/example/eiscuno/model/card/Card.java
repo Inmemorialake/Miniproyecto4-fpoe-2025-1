@@ -76,9 +76,13 @@ public class Card {
             if (this.isPlusTwo()) {
                 return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isPlusTwo());
             }
-            // Skip or Reverse: can be played if color matches
-            if (this.isSkipOrReverse()) {
-                return this.color != null && topCard.getColor() != null && this.color.equalsIgnoreCase(topCard.getColor());
+            // Skip: can be placed if the color or the type matches
+            if (this.isSkip()) {
+                return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isSkip());
+            }
+            // Reverse: can be placed if the color or the type matches
+            if (this.isReverse()){
+                return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isReverse());
             }
             // Number cards: can be played if color or value matches
             if (this.value != null && this.value.matches("[0-9]+")) {
@@ -93,9 +97,18 @@ public class Card {
         }
     }
 
-    public boolean isSkipOrReverse() {
+    public boolean isReverse() {
         String urlLower = this.url.toLowerCase();
-        return urlLower.contains("skip") || urlLower.contains("reverse");
+        return urlLower.contains("reverse");
+    }
+
+    public boolean isSkip(){
+        String urlLower = this.url.toLowerCase();
+        return urlLower.contains("skip");
+    }
+
+    public boolean isSkipOrReverse(){
+        return (this.isSkip() || this.isReverse());
     }
 
     // Métodos auxiliares para identificar tipos de carta
