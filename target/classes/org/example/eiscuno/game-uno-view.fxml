@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1126.0" style="-fx-background-color: orange;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.GameUnoController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1126.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.GameUnoController">
    <left>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -32,14 +32,6 @@
    <right>
       <VBox alignment="CENTER" prefHeight="499.0" prefWidth="222.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="labelCurrentColor" text="Color actual:">
-               <font>
-                  <Font name="Arial Rounded MT Bold" size="20.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="50.0" />
-               </VBox.margin>
-            </Label>
             <ImageView fx:id="unoImageView" fitHeight="135.0" fitWidth="210.0" onMouseClicked="#onHandleUno" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/button_uno.png" />
@@ -64,6 +56,14 @@
    <top>
       <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
+            <Label fx:id="labelCurrentColor" text="Color actual:">
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets right="160.0" />
+               </HBox.margin>
+            </Label>
             <GridPane fx:id="gridPaneCardsMachine">
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -75,12 +75,12 @@
                   <RowConstraints />
                </rowConstraints>
                <HBox.margin>
-                  <Insets right="200.0" />
+                  <Insets right="240.0" />
                </HBox.margin>
             </GridPane>
-            <ImageView fitHeight="108.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="59.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@x-removebg-preview.png" />
+                  <Image url="@icons/x-removebg-preview.png" />
                </image>
                <HBox.margin>
                   <Insets right="50.0" />
@@ -100,7 +100,7 @@
          <children>
             <ImageView fitHeight="150.0" fitWidth="120.0" onMouseClicked="#onHandleBack" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@flechaIzquierda.png" />
+                  <Image url="@icons/flechaIzquierda.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -125,7 +125,7 @@
             </GridPane>
             <ImageView fitHeight="150.0" fitWidth="120.0" onMouseClicked="#onHandleNext" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@flecha-derecha.png" />
+                  <Image url="@icons/flecha-derecha.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
