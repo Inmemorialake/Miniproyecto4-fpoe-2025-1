@@ -3,15 +3,17 @@ package org.example.eiscuno.model.card;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.Serializable;
+
 /**
  * Represents a card in the Uno game.
  */
-public class Card {
+public class Card implements Serializable {
     private String url;
     private String value;
     private String color;
-    private Image image;
-    private ImageView cardImageView;
+    private transient Image image;
+    private transient ImageView cardImageView;
 
     /**
      * Constructs a Card with the specified image URL and name.
@@ -35,8 +37,8 @@ public class Card {
     private ImageView createCardImageView() {
         ImageView card = new ImageView(this.image);
         card.setY(16);
-        card.setFitHeight(90);
-        card.setFitWidth(70);
+        card.setFitHeight(170);
+        card.setFitWidth(110);
         return card;
     }
 
@@ -76,9 +78,13 @@ public class Card {
             if (this.isPlusTwo()) {
                 return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isPlusTwo());
             }
-            // Skip or Reverse: can be played if color matches
-            if (this.isSkipOrReverse()) {
-                return this.color != null && topCard.getColor() != null && this.color.equalsIgnoreCase(topCard.getColor());
+            // Skip: can be placed if the color or the type matches
+            if (this.isSkip()) {
+                return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isSkip());
+            }
+            // Reverse: can be placed if the color or the type matches
+            if (this.isReverse()){
+                return this.color != null && topCard.getColor() != null && (this.color.equalsIgnoreCase(topCard.getColor()) || topCard.isReverse());
             }
             // Number cards: can be played if color or value matches
             if (this.value != null && this.value.matches("[0-9]+")) {
@@ -93,9 +99,18 @@ public class Card {
         }
     }
 
-    public boolean isSkipOrReverse() {
+    public boolean isReverse() {
         String urlLower = this.url.toLowerCase();
-        return urlLower.contains("skip") || urlLower.contains("reverse");
+        return urlLower.contains("reverse");
+    }
+
+    public boolean isSkip(){
+        String urlLower = this.url.toLowerCase();
+        return urlLower.contains("skip");
+    }
+
+    public boolean isSkipOrReverse(){
+        return (this.isSkip() || this.isReverse());
     }
 
     // Métodos auxiliares para identificar tipos de carta
@@ -147,5 +162,10 @@ public class Card {
 
     public String getUrl() {
         return url;
+    }
+
+    public void restoreVisuals() {
+        this.image = new Image(String.valueOf(getClass().getResource(url)));
+        this.cardImageView = createCardImageView();
     }
 }

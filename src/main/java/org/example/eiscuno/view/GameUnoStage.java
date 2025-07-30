@@ -19,7 +19,7 @@ public class GameUnoStage extends Stage {
      * @throws IOException if an error occurs while loading the FXML file for the game interface.
      */
     public GameUnoStage() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/game-uno-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/home-uno-view.fxml"));
         Parent root;
         try {
             root = loader.load();
