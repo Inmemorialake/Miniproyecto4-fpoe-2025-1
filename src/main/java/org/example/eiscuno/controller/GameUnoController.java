@@ -7,11 +7,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.common.GameState;
@@ -45,6 +44,9 @@ public class GameUnoController {
 
     @FXML
     private Label labelCurrentColor;
+
+    @FXML
+    private BorderPane borderPane;
 
     @FXML
     private ImageView unoImageView;
@@ -100,6 +102,17 @@ public class GameUnoController {
         Timeline unoCheckTimeline = new Timeline(new KeyFrame(Duration.millis(500), e -> checkUnoConditions()));
         unoCheckTimeline.setCycleCount(Animation.INDEFINITE);
         unoCheckTimeline.play();
+
+        Image backgroundImage = new Image(getClass().getResource("/org/example/eiscuno/images/fondo.png").toExternalForm());
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, false, true);
+        BackgroundImage bgImage = new BackgroundImage(
+                backgroundImage,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                backgroundSize
+        );
+        borderPane.setBackground(new Background(bgImage));
     }
 
     /**
@@ -215,13 +228,25 @@ public class GameUnoController {
     private void printMachinePlayerCards() {
         this.gridPaneCardsMachine.getChildren().clear();
         int numCards = machinePlayer.getCardsPlayer().size();
-        for (int i = 0; i < numCards; i++) {
-            ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cardReverse-removebg-preview.png").toExternalForm()));
-            cardBack.setFitHeight(170);
-            cardBack.setFitWidth(110);
-            cardBack.setTranslateX(i * 75);
-            this.gridPaneCardsMachine.add(cardBack, 0, 0);
+        if(numCards <= 8) {
+            for (int i = 0; i < numCards; i++) {
+                ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cardReverse-removebg-preview.png").toExternalForm()));
+                cardBack.setFitHeight(170);
+                cardBack.setFitWidth(110);
+                cardBack.setTranslateX(i * 75);
+                this.gridPaneCardsMachine.add(cardBack, 0, 0);
+            }
+
+        } else {
+            for (int i = 0; i < 8; i++) {
+                ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cardReverse-removebg-preview.png").toExternalForm()));
+                cardBack.setFitHeight(170);
+                cardBack.setFitWidth(110);
+                cardBack.setTranslateX(i * 75);
+                this.gridPaneCardsMachine.add(cardBack, 0, 0);
+            }
         }
+
 
     }
 

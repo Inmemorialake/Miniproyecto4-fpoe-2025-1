@@ -44,7 +44,7 @@
                      <children>
                         <ImageView fitHeight="420.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@geenCard.PNG" />
+                              <Image url="@icons/geenCard.PNG" />
                            </image>
                            <StackPane.margin>
                               <Insets />
@@ -76,7 +76,7 @@
                      <children>
                         <ImageView fitHeight="420.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@redCard.PNG" />
+                              <Image url="@icons/redCard.PNG" />
                            </image>
                            <StackPane.margin>
                               <Insets left="25.0" right="25.0" />
@@ -108,7 +108,7 @@
                      <children>
                         <ImageView fitHeight="420.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@blueCard.PNG" />
+                              <Image url="@icons/blueCard.PNG" />
                            </image>
                            <StackPane.margin>
                               <Insets />
