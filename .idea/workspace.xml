@@ -5,13 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GamePauseManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/deck/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/deck/Deck.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadSingUNOMachine.java" beforeDir="false" />
     </list>
     <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/ColorChooser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/game/GameUno.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/game/IGameUno.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,8 +33,8 @@
         <option value="JavaFXApplication" />
         <option value="Enum" />
         <option value="CSS File" />
-        <option value="Interface" />
         <option value="FxmlFile" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -51,15 +60,65 @@
   }
 }]]></component>
   <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java">
+      <ranges>
+        <range start1="2" end1="2" start2="2" end2="3" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="4" end1="5" start2="5" end2="5" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="11" end1="11" start2="11" end2="12" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="23" end1="23" start2="24" end2="26" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="53" end1="54" start2="56" end2="57" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="85" end1="85" start2="88" end2="129" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="118" end1="121" start2="162" end2="167" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="122" end1="123" start2="168" end2="171" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="124" end1="126" start2="172" end2="178" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="129" end1="129" start2="181" end2="185" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+      </ranges>
+    </file>
     <file path="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java">
       <ranges>
-        <range start1="65" end1="65" start2="65" end2="66" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
-        <range start1="66" end1="66" start2="67" end2="68" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
-        <range start1="67" end1="67" start2="69" end2="70" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
-        <range start1="69" end1="69" start2="72" end2="73" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
-        <range start1="71" end1="71" start2="75" end2="76" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
-        <range start1="76" end1="76" start2="81" end2="85" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
-        <range start1="77" end1="81" start2="86" end2="87" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="10" end1="10" start2="10" end2="11" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="11" end1="12" start2="12" end2="12" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="18" end1="18" start2="18" end2="19" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="20" end1="21" start2="21" end2="22" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="24" end1="24" start2="25" end2="26" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="44" end1="45" start2="46" end2="49" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="49" end1="50" start2="53" end2="53" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="67" end1="67" start2="70" end2="71" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="69" end1="69" start2="73" end2="74" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="79" end1="82" start2="84" end2="87" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="122" end1="125" start2="127" end2="128" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="126" end1="128" start2="129" end2="131" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="129" end1="159" start2="132" end2="133" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="161" end1="161" start2="135" end2="137" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="163" end1="164" start2="139" end2="140" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="167" end1="168" start2="143" end2="144" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="173" end1="173" start2="149" end2="198" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="181" end1="182" start2="206" end2="207" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="184" end1="185" start2="209" end2="210" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="191" end1="192" start2="216" end2="217" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="194" end1="233" start2="219" end2="222" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="249" end1="250" start2="238" end2="239" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="277" end1="277" start2="266" end2="270" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java">
+      <ranges>
+        <range start1="7" end1="7" start2="7" end2="8" changelist="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" />
+        <range start1="14" end1="18" start2="15" end2="15" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="19" end1="19" start2="16" end2="17" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="21" end1="25" start2="19" end2="20" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="26" end1="27" start2="21" end2="22" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="32" end1="33" start2="27" end2="29" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="34" end1="53" start2="30" end2="42" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="54" end1="63" start2="43" end2="45" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="64" end1="69" start2="46" end2="49" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="70" end1="74" start2="50" end2="55" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="75" end1="96" start2="56" end2="68" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="98" end1="98" start2="70" end2="86" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="102" end1="105" start2="90" end2="93" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="108" end1="108" start2="96" end2="98" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="112" end1="112" start2="102" end2="103" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
+        <range start1="116" end1="116" start2="107" end2="113" changelist="58c79a61-e838-4612-9472-683cdd46782a" />
       </ranges>
     </file>
   </component>
@@ -174,7 +233,7 @@
       <workItem from="1753223210888" duration="9303000" />
       <workItem from="1753820690118" duration="14462000" />
       <workItem from="1753837844032" duration="14646000" />
-      <workItem from="1753902616059" duration="3552000" />
+      <workItem from="1753902616059" duration="10261000" />
     </task>
     <task id="LOCAL-00001" summary="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
       <option name="closed" value="true" />

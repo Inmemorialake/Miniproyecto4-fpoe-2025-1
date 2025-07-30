@@ -137,12 +137,12 @@ public class Deck implements Serializable {
 
     /**
      * Takes a specified number of cards from the deck.
-     * @param i the number of cards to take.
+     * @param cardCount the number of cards to take.
      * @return a list of taken cards.
      */
-    public Object takeCards(int i) {
+    public Object takeCards(int cardCount) {
         List<Card> takenCards = new ArrayList<>();
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < cardCount; j++) {
             if (!deckOfCards.isEmpty()) {
                 takenCards.add(deckOfCards.pop());
             } else {

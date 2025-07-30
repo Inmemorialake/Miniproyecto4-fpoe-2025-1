@@ -1,14 +1,15 @@
 package org.example.eiscuno.model.common;
 
+import javafx.application.Platform;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
-import org.example.eiscuno.model.game.GameUno;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameHandler implements Serializable {
 
@@ -21,6 +22,8 @@ public class GameHandler implements Serializable {
     private boolean isHumanTurn;
     private boolean humanSaidUno;
     private boolean gameEnded;
+
+    private transient ColorChooser colorChooser;
 
     public GameHandler(Player human, Player machine, Deck deck, Table table,
                        boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {
@@ -51,7 +54,7 @@ public class GameHandler implements Serializable {
             } else {
                 machinePlayer.addCard(deck.takeCard());
             }
-        }
+        } //Sexo anal
 
         // Seleccionar carta inicial que no sea especial
         Card initialCard;
@@ -82,6 +85,47 @@ public class GameHandler implements Serializable {
         } else {
             humanPlayer.addCard(deck.takeCard());
         }
+    }
+
+    public boolean handleHumanCardClick(Card card, Runnable onFinish) {
+        if (!isHumanTurn) {
+            return false; // para que el controlador sepa si fue un movimiento válido
+        }
+
+        if (!card.canBePlayedOn(getCurrentCardOnTable())) {
+            return false;
+        }
+
+        playCard(humanPlayer, card);
+        PlayerStatsManager.updateStats(false, 1, true);
+
+        applySpecialCardEffect(card, true);
+
+        checkWinner();
+
+        // Verificar UNO
+        if (humanPlayer.getCardsPlayer().size() == 1 && !humanSaidUno) {
+            // lanzar temporizador si no dijo UNO
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                    if (!humanSaidUno && humanPlayer.getCardsPlayer().size() == 1) {
+                        eatCard(humanPlayer, 1);
+                    }
+                } catch (InterruptedException ignored) {}
+            }).start();
+        }
+
+        if (!card.isSkipOrReverse() && !card.isPlusTwo() && !card.isPlusFour()) {
+            // Si no es una carta especial, pasamos el turno a la máquina
+            passTurnToMachine();
+        }
+
+        if (onFinish != null) {
+            Platform.runLater(onFinish);
+        }
+
+        return true;
     }
 
     public Card[] getCurrentVisibleCardsHumanPlayer(int posInitCardToShow) {
@@ -116,16 +160,28 @@ public class GameHandler implements Serializable {
             } else {
                 humanPlayer.addCards(deck.takeCards(2));
             }
-        } else if (card.isPlusFour()) {
-            if (playedByHuman) {
-                machinePlayer.addCards(deck.takeCards(4));
+        } else if (card.isPlusFour() || card.isWildCard()) {
+            String newColor = "RED"; // por defecto
+
+            if (playedByHuman && colorChooser != null) {
+                newColor = colorChooser.chooseColor(); // popup si es humano
             } else {
-                humanPlayer.addCards(deck.takeCards(4));
+                // color aleatorio para IA
+                String[] colors = {"RED", "GREEN", "BLUE", "YELLOW"};
+                newColor = colors[new Random().nextInt(colors.length)];
             }
-        } else if (card.isSkipOrReverse()) {
-            // El jugador que juega se queda con el turno (reverse/skip)
+
+            card.setColor(newColor);
+        }
+
+        if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {
+            // El jugador que juega se queda con el turno (reverse/skip/PlusSomething)
             isHumanTurn = playedByHuman;
         }
+    }
+
+    public void setColorChooser(ColorChooser colorChooser) {
+        this.colorChooser = colorChooser;
     }
 
     public void checkWinner() {

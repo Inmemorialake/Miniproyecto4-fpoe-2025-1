@@ -8,20 +8,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.common.GameHandler;
+import org.example.eiscuno.model.common.GamePauseManager;
 import org.example.eiscuno.model.common.PlayerStatsManager;
 import org.example.eiscuno.model.machine.ThreadPlayMachine;
-import org.example.eiscuno.model.machine.ThreadSingUNOMachine;
+import org.example.eiscuno.model.machine.ThreadUnoCallout;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 
 public class GameUnoController {
 
@@ -42,12 +44,13 @@ public class GameUnoController {
 
     private GameHandler gameHandler;
 
-    private ThreadSingUNOMachine threadSingUNOMachine;
+    private int posInitCardToShow = 0;
+
+    private ThreadUnoCallout threadUnoCallout;
     private ThreadPlayMachine threadPlayMachine;
 
     private final Object turnLock = new Object();
     private boolean repeatTurn = false;
-    private int posInitCardToShow = 0;
 
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
@@ -65,8 +68,10 @@ public class GameUnoController {
     public void initialize() {
         System.out.println("funka");
         initVariables();
+        setChooseColorHumanBehaviour();
         System.out.println("funka");
         printHumanPlayerCards();
+        printMachinePlayerCards();
         System.out.println("funka");
         if (!gameHandler.getTable().getCards().isEmpty()) {
             tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
@@ -77,9 +82,9 @@ public class GameUnoController {
     }
 
     public void startThreads() {
-        threadSingUNOMachine = new ThreadSingUNOMachine(gameHandler.getHumanPlayer().getCardsPlayer());
-        threadPlayMachine = new ThreadPlayMachine(gameHandler.getTable(), gameHandler.getMachinePlayer(), tableImageView, gameHandler, gameHandler.getDeck());
-        Thread t = new Thread(threadSingUNOMachine, "ThreadSingUNO");
+        threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));
+        threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView);
+        Thread t = new Thread(threadUnoCallout, "ThreadSingUNO");
         t.start();
         Thread s = new Thread(threadPlayMachine, "ThreadPlayMachine");
         s.start();
@@ -120,56 +125,76 @@ public class GameUnoController {
 
     public void printHumanPlayerCards() {
         gridPaneCardsPlayer.getChildren().clear();
-        printMachinePlayerCards();
-        updateCurrentColorUI();
-        Card[] currentVisibleCardsHumanPlayer = gameHandler.getGame().getCurrentVisibleCardsHumanPlayer(0);
+        Card[] visibleCards = gameHandler.getCurrentVisibleCardsHumanPlayer(posInitCardToShow);
 
-        for (int i = 0; i < currentVisibleCardsHumanPlayer.length; i++) {
-            final Card card = currentVisibleCardsHumanPlayer[i];
+        for (int i = 0; i < visibleCards.length; i++) {
+            Card card = visibleCards[i];
             ImageView cardImageView = card.getCard();
-
-            cardImageView.setOnMouseClicked((MouseEvent event) -> {
-                if (!gameHandler.getHumanTurn()) {
-                    showTurnError();
-                    return;
-                }
-                if (card.canBePlayedOn(gameHandler.getCurrentCardOnTable())) {
-                    gameHandler.playCard(gameHandler.getHumanPlayer(), card);
-                    PlayerStatsManager.updateStats(false, 1, true);
-                    tableImageView.setImage(card.getImage());
-                    printHumanPlayerCards();
-
-                    if (card.isWildCard() || card.isPlusFour()) {
-                        chooseColorAfterWild(true, card.isPlusFour());
-                    } else if (!repeatTurn) {
-                        gameHandler.passTurnToMachine();
-                    }
-
-                    if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {
-                        gameHandler.setHumanSaidUno(false);
-                        startUnoTimerForHuman();
-                    }
-
-                    gameHandler.checkWinner();
-                    saveGame();
-                } else {
-                    showInvalidMoveError();
-                }
-            });
-
+            attachClickHandlerToCard(card, cardImageView); // Mover comportamiento a una función aparte
             gridPaneCardsPlayer.add(cardImageView, i, 0);
         }
+
+        updateCurrentColorUI();
     }
 
-    private void printMachinePlayerCards() {
+    public void printMachinePlayerCards() {
         gridPaneCardsMachine.getChildren().clear();
         int numCards = gameHandler.getMachinePlayer().getCardsPlayer().size();
         for (int i = 0; i < numCards; i++) {
-            ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cards-uno/card_uno.png").toExternalForm()));
+            ImageView cardBack = new ImageView(new Image(getClass().getResource("/org/example/eiscuno/cards-uno/card_uno.png").toExternalForm()));
             cardBack.setFitHeight(90);
             cardBack.setFitWidth(70);
             gridPaneCardsMachine.add(cardBack, i, 0);
         }
+    }
+
+    private void attachClickHandlerToCard(Card card, ImageView cardImageView) {
+        cardImageView.setOnMouseClicked(event -> {
+            boolean wasPlayed = gameHandler.handleHumanCardClick(card, () -> {
+                tableImageView.setImage(card.getImage());
+                printHumanPlayerCards(); // actualizar visualmente
+                printMachinePlayerCards();
+                saveGame();
+            });
+
+            if (!wasPlayed) {
+                if (!gameHandler.getHumanTurn()) {
+                    showTurnError();
+                } else {
+                    showInvalidMoveError();
+                }
+            }
+        });
+    }
+
+    private void setChooseColorHumanBehaviour(){
+        gameHandler.setColorChooser(() -> {
+            final String[] selectedColor = new String[1];
+            CountDownLatch latch = new CountDownLatch(1);
+
+            Platform.runLater(() -> {
+                GamePauseManager.getInstance().pauseGame(); // si lo usas
+                ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", Arrays.asList("ROJO", "VERDE", "AZUL", "AMARILLO"));
+                dialog.setTitle("Cambio de color");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Elige el color para continuar:");
+
+                dialog.setOnHidden(event -> {
+                    GamePauseManager.getInstance().resumeGame();
+                });
+
+                dialog.showAndWait().ifPresent(color -> selectedColor[0] = COLOR_MAP.getOrDefault(color.toUpperCase(), color.toUpperCase()));
+                latch.countDown();
+            });
+
+            try {
+                latch.await(); // bloquea hasta que el usuario seleccione
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return selectedColor[0] != null ? selectedColor[0] : "RED"; // fallback
+        });
     }
 
     @FXML
@@ -179,58 +204,22 @@ public class GameUnoController {
             return;
         }
         if (gameHandler.hasPlayableCard(gameHandler.getHumanPlayer())) {
-            showInvalidMoveError();
+            showInvalidTryToTakeCardError();
             return;
         }
-        gameHandler.getGame().eatCard(gameHandler.getHumanPlayer(), 1);
+        gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);
         printHumanPlayerCards();
         gameHandler.passTurnToMachine();
     }
 
     @FXML
     void onHandleUno(ActionEvent event) {
-        if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {
+        if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1 && !gameHandler.getHumanSaidUno()) {
             gameHandler.setHumanSaidUno(true);
             showAlert("UNO declarado", "¡Has declarado UNO correctamente!");
-        }
-        if (gameHandler.getMachinePlayer().getCardsPlayer().size() == 1 && !gameHandler.getIASaidUno()) {
-            showAlert("UNO cantado a la IA!", "Has cantado correctamente UNO! a la máquina, ahora comerá una carta.");
-            gameHandler.getGame().eatCard(gameHandler.getMachinePlayer(), 1);
-            gameHandler.setIASaidUno(false);
-            printMachinePlayerCards();
-        }
-        unoButton.setVisible(false);
-    }
-
-    private void chooseColorAfterWild(boolean playedByHuman, boolean isPlusFour) {
-        if (playedByHuman) {
-            Platform.runLater(() -> {
-                ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", Arrays.asList("ROJO", "VERDE", "AZUL", "AMARILLO"));
-                dialog.setTitle("Cambio de color");
-                dialog.setHeaderText(null);
-                dialog.setContentText("Elige el color para continuar:");
-                dialog.showAndWait().ifPresent(color -> {
-                    gameHandler.getCurrentCardOnTable().setColor(COLOR_MAP.getOrDefault(color.toUpperCase(), color.toUpperCase()));
-                    tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
-                    updateCurrentColorUI();
-                    if (isPlusFour) {
-                        gameHandler.getGame().eatCard(gameHandler.getMachinePlayer(), 4);
-                        printMachinePlayerCards();
-                        showAlert("+4 jugado", "La máquina toma 4 cartas.");
-                    }
-                    if (!repeatTurn) {
-                        gameHandler.passTurnToMachine();
-                    }
-                });
-            });
-        } else {
-            String[] colors = {"RED", "GREEN", "BLUE", "YELLOW"};
-            String color = colors[new java.util.Random().nextInt(colors.length)];
-            gameHandler.getCurrentCardOnTable().setColor(color);
-            Platform.runLater(() -> {
-                tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
-                updateCurrentColorUI();
-            });
+        } else if (gameHandler.getMachinePlayer().getCardsPlayer().size() == 1 && !gameHandler.getIASaidUno()) {
+            gameHandler.eatCard(gameHandler.getMachinePlayer(), 1);
+            showAlert("UNO callout a la máquina", "¡La máquina no dijo UNO! Le has hecho comer una carta.");
         }
     }
 
@@ -247,7 +236,7 @@ public class GameUnoController {
             if (!gameHandler.getHumanSaidUno() && gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {
                 Platform.runLater(() -> {
                     showAlert("¡No dijiste UNO!", "La máquina notó que no dijiste UNO. Comes una carta.");
-                    gameHandler.getGame().eatCard(gameHandler.getHumanPlayer(), 1);
+                    gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);
                     unoButton.setVisible(false);
                     printHumanPlayerCards();
                 });
@@ -274,6 +263,10 @@ public class GameUnoController {
 
     private void showInvalidMoveError() {
         showAlert("Jugada inválida", "No puedes jugar esa carta. Debe coincidir en color, número o símbolo con la carta de la mesa.");
+    }
+
+    private void showInvalidTryToTakeCardError(){
+        showAlert("Intento inválido", "No puedes tomar una carta si tienes cartas jugables. Juega una carta primero.");
     }
 
     private void showAlert(String title, String content) {
