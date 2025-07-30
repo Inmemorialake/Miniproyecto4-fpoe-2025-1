@@ -3,15 +3,17 @@ package org.example.eiscuno.model.card;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.Serializable;
+
 /**
  * Represents a card in the Uno game.
  */
-public class Card {
+public class Card implements Serializable {
     private String url;
     private String value;
     private String color;
-    private Image image;
-    private ImageView cardImageView;
+    private transient Image image;
+    private transient ImageView cardImageView;
 
     /**
      * Constructs a Card with the specified image URL and name.
@@ -160,5 +162,10 @@ public class Card {
 
     public String getUrl() {
         return url;
+    }
+
+    public void restoreVisuals() {
+        this.image = new Image(String.valueOf(getClass().getResource(url)));
+        this.cardImageView = createCardImageView();
     }
 }

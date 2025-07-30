@@ -21,12 +21,13 @@ public class ThreadPlayMachine extends Thread {
     private Boolean iaSaidUno = false;
     private Boolean running = true;
 
-    public ThreadPlayMachine(Table table, Player machinePlayer, ImageView tableImageView, GameUnoController controller, Deck deck) {
+    public ThreadPlayMachine(Table table, Player machinePlayer, ImageView tableImageView, GameUnoController controller, Deck deck, Boolean iaSaidUno) {
         this.table = table;
         this.machinePlayer = machinePlayer;
         this.tableImageView = tableImageView;
         this.controller = controller;
         this.deck = deck;
+        this.iaSaidUno = iaSaidUno;
     }
 
     public void run() {
@@ -63,19 +64,23 @@ public class ThreadPlayMachine extends Thread {
 
                     // Si la maquina se queda con una sola carta, hacemos la secuencia para que cante uno
                     if (machinePlayer.getCardsPlayer().size() == 1 && !iaSaidUno) {
-                        controller.makeUnoButtonVisible();
                         new Thread(() -> {
                             try {
                                 Thread.sleep(2000 + new Random().nextInt(2000)); // 2 a 4 seg
                             } catch (InterruptedException ignored) {}
                             Platform.runLater(() -> {
-                                iaSaidUno = true;
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("¡UNO!");
-                                alert.setHeaderText(null);
-                                alert.setContentText("La máquina ha gritado ¡UNO!");
-                                controller.makeUnoButtonInvisible();
-                                alert.showAndWait();
+                                if(!controller.getHumanSaidUno()) {
+                                    iaSaidUno = true;
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("¡UNO!");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("La máquina ha gritado ¡UNO!");
+
+                                    //Guardamos la partida
+                                    controller.saveGame();
+
+                                    alert.showAndWait();
+                                }
                             });
                         }).start();
                     }
@@ -100,11 +105,18 @@ public class ThreadPlayMachine extends Thread {
                         // Si repeatTurn era true (por reverse/skip), después de comer una carta, pon repeatTurn = false y pasa el turno
                         repeat = false;
                         controller.passTurnToHuman();
+
+                        //Guardamos la partida
+                        controller.saveGame();
+
                         break;
                     }
                 }
                 if (!repeat) {
                     controller.passTurnToHuman();
+
+                    //Guardamos la partida
+                    controller.saveGame();
                 }
             } while (repeat);
         }
@@ -124,6 +136,10 @@ public class ThreadPlayMachine extends Thread {
     public Boolean getIASaidUno() {
         return iaSaidUno;
     }
+
+    public Boolean getRunning() { return running; }
+
+    public void setRunning(Boolean aBoolean) { this.running = aBoolean; }
 
     public void stopThread(){
         running = false;

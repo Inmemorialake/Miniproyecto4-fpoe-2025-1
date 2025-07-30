@@ -2,12 +2,13 @@ package org.example.eiscuno.model.table;
 
 import org.example.eiscuno.model.card.Card;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Represents the table in the Uno game where cards are played.
  */
-public class Table {
+public class Table implements Serializable {
     private ArrayList<Card> cardsTable;
 
     /**
@@ -37,5 +38,9 @@ public class Table {
             throw new IndexOutOfBoundsException("There are no cards on the table.");
         }
         return this.cardsTable.get(this.cardsTable.size()-1);
+    }
+
+    public ArrayList<Card> getCards(){
+        return cardsTable;
     }
 }

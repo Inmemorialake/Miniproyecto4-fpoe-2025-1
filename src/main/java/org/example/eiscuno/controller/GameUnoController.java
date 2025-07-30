@@ -1,12 +1,18 @@
 package org.example.eiscuno.controller;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import org.example.eiscuno.model.card.Card;
+import org.example.eiscuno.model.common.GameState;
 import org.example.eiscuno.model.common.PlayerStatsManager;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.game.GameUno;
@@ -16,6 +22,8 @@ import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
+
+import java.io.*;
 import java.util.Arrays;
 import javafx.scene.control.Label;
 
@@ -40,7 +48,7 @@ public class GameUnoController {
     private Button unoButton;
 
     private boolean humanSaidUno = false;
-    private boolean iaSaidUno = false;
+    private boolean iaSaidUnoAuxiliar = false;
 
     private Player humanPlayer;
     private Player machinePlayer;
@@ -56,6 +64,9 @@ public class GameUnoController {
     private ThreadPlayMachine threadPlayMachine;
 
     private int cardsPlayedByHuman = 0; //To make the csv :)
+
+    //To know if someone already won and not have 2 calls of the showWinner because of the thread
+    private boolean gameEnded = false;
 
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
@@ -75,28 +86,66 @@ public class GameUnoController {
     @FXML
     public void initialize() {
         initVariables();
-        this.gameUno.startGame();
         printHumanPlayerCards();
         // Mostrar la carta inicial en la mesa
         tableImageView.setImage(gameUno.getCurrentCardOnTable().getImage());
-        isHumanTurn = true;
         threadSingUNOMachine = new ThreadSingUNOMachine(this.humanPlayer.getCardsPlayer());
         Thread t = new Thread(threadSingUNOMachine, "ThreadSingUNO");
         t.start();
-        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView, this, this.deck);
+        threadPlayMachine = new ThreadPlayMachine(this.table, this.machinePlayer, this.tableImageView, this, this.deck, this.iaSaidUnoAuxiliar);
         threadPlayMachine.start();
+        // Timer para revelar el boton de uno y reiniciar los saidUno
+        Timeline unoCheckTimeline = new Timeline(new KeyFrame(Duration.millis(500), e -> checkUnoConditions()));
+        unoCheckTimeline.setCycleCount(Animation.INDEFINITE);
+        unoCheckTimeline.play();
     }
 
     /**
      * Initializes the variables for the game.
      */
     private void initVariables() {
+        File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
+
+        if (saveFile.exists()) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(saveFile))) {
+                GameState loaded = (GameState) in.readObject();
+
+                this.humanPlayer = loaded.getHumanPlayer();
+                this.machinePlayer = loaded.getMachinePlayer();
+                this.deck = loaded.getDeck();
+                this.table = loaded.getTable();
+                this.gameUno = loaded.getGame();
+                this.isHumanTurn = loaded.getHumanTurn();
+                this.humanSaidUno = loaded.getHumanSaidUno();
+                this.iaSaidUnoAuxiliar = loaded.getIASaidUno();
+
+                // Restaurar imágenes de cartas, ya que son transient
+                for (Card c : humanPlayer.getCardsPlayer()) c.restoreVisuals();
+                for (Card c : machinePlayer.getCardsPlayer()) c.restoreVisuals();
+                for (Card c : table.getCards()) c.restoreVisuals();
+                for (Card c : deck.getAllCards()) c.restoreVisuals(); // si implementas getAllCards()
+
+                System.out.println("Partida cargada correctamente.");
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                System.out.println("Fallo al cargar partida, se crea una nueva.");
+                createNewGame();
+            }
+        } else {
+            createNewGame();
+        }
+    }
+
+    private void createNewGame() {
         this.humanPlayer = new Player("HUMAN_PLAYER");
         this.machinePlayer = new Player("MACHINE_PLAYER");
         this.deck = new Deck();
         this.table = new Table();
         this.gameUno = new GameUno(this.humanPlayer, this.machinePlayer, this.deck, this.table);
+        this.gameUno.startGame();
         this.posInitCardToShow = 0;
+        this.isHumanTurn = true;
     }
 
     /**
@@ -121,7 +170,7 @@ public class GameUnoController {
                 Card topCard = gameUno.getCurrentCardOnTable();
                 if (card.canBePlayedOn(topCard)) {
                     gameUno.playCard(card);
-                    cardsPlayedByHuman++; //OMG
+                    PlayerStatsManager.updateStats(false,1, true); //OMG
                     tableImageView.setImage(card.getImage());
                     humanPlayer.getCardsPlayer().remove(card);
                     printHumanPlayerCards();
@@ -135,15 +184,17 @@ public class GameUnoController {
 
                     // Si el humano se queda con una sola carta, empezamos la secuencia para decir uno
                     if (humanPlayer.getCardsPlayer().size() == 1) {
-                        unoButton.setVisible(true);
                         humanSaidUno = false;
                         startUnoTimerForHuman();
                     } else {
-                        unoButton.setVisible(false);
+
                     }
 
                     // Hacemos el check por si el jugador ha ganado
                     checkWinner();
+
+                    // Guardamos la partida
+                    saveGame();
 
                 } else {
                     showInvalidMoveError();
@@ -231,6 +282,7 @@ public class GameUnoController {
         // No puede jugar, toma una carta y cede el turno
         gameUno.eatCard(humanPlayer, 1);
         printHumanPlayerCards();
+
         // Añadir un pequeño delay antes de ceder el turno
         new Thread(() -> {
             try {
@@ -242,6 +294,10 @@ public class GameUnoController {
                 // Si repeatTurn era true (por reverse/skip), después de comer una carta, pon repeatTurn = false y cede el turno
                 repeatTurn = false;
                 isHumanTurn = false;
+
+                //Guardamos la partida
+                saveGame();
+
                 synchronized (turnLock) { turnLock.notifyAll(); }
             });
         }).start();
@@ -381,39 +437,52 @@ public class GameUnoController {
     }
 
     public void applySpecialCardEffect(Card card, boolean playedByHuman) {
-        // Efectos de cartas especiales UNO
+        repeatTurn = false; // Por defecto no se repite el turno
+
         if (card.isPlusTwo()) {
-            repeatTurn = false;
+            repeatTurn = true;
+
             if (playedByHuman) {
                 gameUno.eatCard(machinePlayer, 2);
+                isHumanTurn = true;
                 printMachinePlayerCards();
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("+2 jugado");
                     alert.setHeaderText(null);
                     alert.setContentText("La máquina toma 2 cartas.");
                     alert.showAndWait();
                 });
+
+                // 👇 La máquina pierde turno, NO se hace nada más
+
             } else {
+                isHumanTurn = false;
                 gameUno.eatCard(humanPlayer, 2);
-                javafx.application.Platform.runLater(this::printHumanPlayerCards);
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(this::printHumanPlayerCards);
+                Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("+2 recibido");
                     alert.setHeaderText(null);
                     alert.setContentText("Debes tomar 2 cartas.");
                     alert.showAndWait();
                 });
+
+                // 👇 El humano pierde turno, se mantiene isHumanTurn = false
+                // NO se invierte turno
             }
+
         } else if (card.isPlusFour()) {
-            repeatTurn = false;
+            repeatTurn = true;
+
             if (playedByHuman) {
-                // El humano juega +4, la máquina debe comer después de elegir el color
-                chooseColorAfterWild(true, true);
+                chooseColorAfterWild(true, true); // Máquina come en callback
+                isHumanTurn = true;
             } else {
+                isHumanTurn = false;
                 gameUno.eatCard(humanPlayer, 4);
-                javafx.application.Platform.runLater(this::printHumanPlayerCards);
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(this::printHumanPlayerCards);
+                Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("+4 recibido");
                     alert.setHeaderText(null);
@@ -421,55 +490,55 @@ public class GameUnoController {
                     alert.showAndWait();
                 });
                 chooseColorAfterWild(false, false);
+                // El turno se queda en la IA (no se modifica isHumanTurn)
             }
+
         } else if (card.isSpecial() && card.isSkipOrReverse()) {
             repeatTurn = true;
             boolean isReverse = card.getUrl().toLowerCase().contains("reverse");
+
             if (playedByHuman) {
                 isHumanTurn = true;
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    if (isReverse) {
-                        alert.setTitle("¡Reversa!");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Jugaste una carta reversa. Juegas de nuevo.");
-                    } else {
-                        alert.setTitle("Turno anulado");
-                        alert.setHeaderText(null);
-                        alert.setContentText("La máquina pierde su turno. Juegas de nuevo.");
-                    }
+                    alert.setTitle(isReverse ? "¡Reversa!" : "Turno anulado");
+                    alert.setHeaderText(null);
+                    alert.setContentText(isReverse ?
+                            "Jugaste una carta reversa. Juegas de nuevo." :
+                            "La máquina pierde su turno. Juegas de nuevo.");
                     alert.showAndWait();
                 });
+
             } else {
                 isHumanTurn = false;
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    if (isReverse) {
-                        alert.setTitle("¡Reversa!");
-                        alert.setHeaderText(null);
-                        alert.setContentText("La máquina jugó una carta reversa. Juega de nuevo.");
-                    } else {
-                        alert.setTitle("Turno anulado");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Pierdes tu turno. La máquina juega de nuevo.");
-                    }
+                    alert.setTitle(isReverse ? "¡Reversa!" : "Turno anulado");
+                    alert.setHeaderText(null);
+                    alert.setContentText(isReverse ?
+                            "La máquina jugó reversa. Juega de nuevo." :
+                            "Pierdes tu turno. La máquina juega de nuevo.");
                     alert.showAndWait();
                 });
+
+                // 👇 Reactivar hilo de IA si es su turno repetido
                 if (!isHumanTurn && repeatTurn) {
                     synchronized (turnLock) { turnLock.notifyAll(); }
                 }
             }
+
         } else if (card.isWildCard()) {
-            repeatTurn = false;
             if (playedByHuman) {
-                // El humano juega comodín, la máquina debe esperar la selección de color
                 chooseColorAfterWild(true, false);
-                // El turno se pasa a la máquina solo después de elegir el color (dentro del callback)
+                // isHumanTurn se cambia dentro del callback
             } else {
                 chooseColorAfterWild(false, false);
+                // isHumanTurn no cambia
             }
+
         } else {
             repeatTurn = false;
+            // Turno pasa normal
         }
     }
 
@@ -558,12 +627,15 @@ public class GameUnoController {
     }
 
     public void checkWinner() {
-        if (humanPlayer.getCardsPlayer().isEmpty()) {
-            showWinner(true);
-        } else if (machinePlayer.getCardsPlayer().isEmpty()) {
-            showWinner(false);
+        if(!gameEnded){
+            if (humanPlayer.getCardsPlayer().isEmpty()) {
+                showWinner(true);
+                gameEnded = true;
+            } else if (machinePlayer.getCardsPlayer().isEmpty()) {
+                showWinner(false);
+                gameEnded = true;
+            }
         }
-
     }
 
     private void showWinner(boolean playerWon) {
@@ -578,8 +650,45 @@ public class GameUnoController {
             alert.showAndWait();
 
             threadPlayMachine.stopThread();
-            PlayerStatsManager.updateStats(playerWon, cardsPlayedByHuman);
+            PlayerStatsManager.updateStats(playerWon, 0, false);
+
+            // Borramos el archivo de guardado porque la partida terminó
+            File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
+            if (saveFile.exists()) {
+                saveFile.delete();
+            }
+
             System.exit(0);
         });
+    }
+
+    public void saveGame() {
+        GameState gameState = new GameState(humanPlayer, machinePlayer, deck, table, gameUno, threadPlayMachine.getIASaidUno(), isHumanTurn, humanSaidUno);
+
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream(PlayerStatsManager.getAppDataFolder() + "/savegame.dat"))) {
+            out.writeObject(gameState);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkUnoConditions() {
+        int humanCards = humanPlayer.getCardsPlayer().size();
+        int machineCards = machinePlayer.getCardsPlayer().size();
+
+        // Mostrar el botón solo si alguno tiene 1 carta y no ha dicho UNO
+        boolean shouldShowButton = (humanCards == 1 && !humanSaidUno) ||
+                (machineCards == 1 && !threadPlayMachine.getIASaidUno());
+
+        Platform.runLater(() -> unoButton.setVisible(shouldShowButton));
+
+        // Resetear flags si ya tienen más de 1 carta
+        if (humanCards > 1 && humanSaidUno) humanSaidUno = false;
+        if (machineCards > 1 && threadPlayMachine.getIASaidUno()) threadPlayMachine.setIASaidUno(false);
+    }
+
+    public boolean getHumanSaidUno() {
+        return humanSaidUno;
     }
 }

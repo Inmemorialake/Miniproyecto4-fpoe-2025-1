@@ -5,11 +5,15 @@ import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a game of Uno.
  * This class manages the game logic and interactions between players, deck, and the table.
  */
-public class GameUno implements IGameUno {
+public class GameUno implements IGameUno, Serializable {
 
     private Player humanPlayer;
     private Player machinePlayer;
@@ -61,7 +65,19 @@ public class GameUno implements IGameUno {
     @Override
     public void eatCard(Player player, int numberOfCards) {
         for (int i = 0; i < numberOfCards; i++) {
-            player.addCard(this.deck.takeCard());
+            try {
+                player.addCard(this.deck.takeCard());
+            } catch (IllegalStateException e) {
+                // El mazo se acabó, así que lo rellenamos con todas las cartas en uso
+                List<Card> inUse = new ArrayList<>();
+                inUse.addAll(humanPlayer.getCardsPlayer());
+                inUse.addAll(machinePlayer.getCardsPlayer());
+
+                deck.refillDeck(inUse);
+
+                // Intentamos de nuevo
+                player.addCard(this.deck.takeCard());
+            }
         }
     }
 

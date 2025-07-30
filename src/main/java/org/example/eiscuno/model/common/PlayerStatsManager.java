@@ -6,7 +6,7 @@ public class PlayerStatsManager {
     private static final String APP_FOLDER_NAME = "EISCUno";
     private static final String FILE_NAME = "player_stats.csv";
 
-    public static void updateStats(boolean won, int cardsPlayedThisGame) {
+    public static void updateStats(boolean won, int cardsToAument, boolean justUpdatePutCards) {
         File dataFolder = getAppDataFolder();
         if (!dataFolder.exists()) {
             dataFolder.mkdirs(); // crea carpeta si no existe
@@ -33,9 +33,12 @@ public class PlayerStatsManager {
             }
         }
 
-        partidasJugadas++;
-        if (won) partidasGanadas++;
-        cartasColocadas += cardsPlayedThisGame;
+        if(!justUpdatePutCards){
+            partidasJugadas++;
+            if (won) partidasGanadas++;
+        }
+
+        cartasColocadas += cardsToAument;
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
             writer.println("partidas_jugadas,partidas_ganadas,cartas_colocadas");

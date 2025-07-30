@@ -3,13 +3,14 @@ package org.example.eiscuno.model.deck;
 import org.example.eiscuno.model.unoenum.EISCUnoEnum;
 import org.example.eiscuno.model.card.Card;
 
-import java.util.Collections;
-import java.util.Stack;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a deck of Uno cards.
  */
-public class Deck {
+public class Deck implements Serializable {
     private Stack<Card> deckOfCards;
 
     /**
@@ -21,7 +22,7 @@ public class Deck {
     }
 
     /**
-     * Initializes the deck with cards based on the EISCUnoEnum values.
+     * Initializes the deck with all possible cards.
      */
     private void initializeDeck() {
         for (EISCUnoEnum cardEnum : EISCUnoEnum.values()) {
@@ -34,10 +35,62 @@ public class Deck {
                     cardEnum.name().startsWith("TWO_WILD_DRAW_") ||
                     cardEnum.name().equals("FOUR_WILD_DRAW") ||
                     cardEnum.name().equals("WILD")) {
+
                 Card card = new Card(cardEnum.getFilePath(), getCardValue(cardEnum.name()), getCardColor(cardEnum.name()));
                 deckOfCards.push(card);
             }
         }
+        Collections.shuffle(deckOfCards);
+    }
+
+    /**
+     * Attempts to take a card from the deck.
+     * If the deck is empty, throws exception (can be improved later).
+     */
+    public Card takeCard() {
+        if (deckOfCards.isEmpty()) {
+            throw new IllegalStateException("El mazo está vacío y no hay forma de reponerlo.");
+        }
+        return deckOfCards.pop();
+    }
+
+    /**
+     * Devuelve todas las cartas actualmente en el mazo (para restaurarlas al cargar una partida).
+     */
+    public List<Card> getAllCards() {
+        return new ArrayList<>(deckOfCards);
+    }
+
+    /**
+     * Reemplaza el mazo con todas las cartas posibles menos las que están en uso.
+     * @param excluded las cartas que NO deben incluirse (cartas en mano y en mesa).
+     */
+    public void refillDeck(List<Card> excluded) {
+        Set<String> excludedUrls = excluded.stream()
+                .map(Card::getUrl)
+                .collect(Collectors.toSet());
+
+        deckOfCards.clear();
+
+        for (EISCUnoEnum cardEnum : EISCUnoEnum.values()) {
+            if (cardEnum.name().startsWith("GREEN_") ||
+                    cardEnum.name().startsWith("YELLOW_") ||
+                    cardEnum.name().startsWith("BLUE_") ||
+                    cardEnum.name().startsWith("RED_") ||
+                    cardEnum.name().startsWith("SKIP_") ||
+                    cardEnum.name().startsWith("REVERSE_") ||
+                    cardEnum.name().startsWith("TWO_WILD_DRAW_") ||
+                    cardEnum.name().equals("FOUR_WILD_DRAW") ||
+                    cardEnum.name().equals("WILD")) {
+
+                String url = cardEnum.getFilePath();
+                if (!excludedUrls.contains(url)) {
+                    Card card = new Card(url, getCardValue(cardEnum.name()), getCardColor(cardEnum.name()));
+                    deckOfCards.push(card);
+                }
+            }
+        }
+
         Collections.shuffle(deckOfCards);
     }
 
@@ -80,27 +133,5 @@ public class Deck {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Takes a card from the top of the deck.
-     *
-     * @return the card from the top of the deck
-     * @throws IllegalStateException if the deck is empty
-     */
-    public Card takeCard() {
-        if (deckOfCards.isEmpty()) {
-            throw new IllegalStateException("No hay más cartas en el mazo.");
-        }
-        return deckOfCards.pop();
-    }
-
-    /**
-     * Checks if the deck is empty.
-     *
-     * @return true if the deck is empty, false otherwise
-     */
-    public boolean isEmpty() {
-        return deckOfCards.isEmpty();
     }
 }
