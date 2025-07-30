@@ -32,7 +32,7 @@ public class ThreadPlayMachine extends Thread {
 
     public void run() {
         while (running) {
-            if (!running) break; //Cositas, no tocar xD
+            if (!running || controller.isGameEnded()) break; // Let me innnn, let me iinnnnnnn
 
             controller.waitForMachineTurn();
             boolean repeat;

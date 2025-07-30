@@ -688,6 +688,10 @@ public class GameUnoController {
         if (machineCards > 1 && threadPlayMachine.getIASaidUno()) threadPlayMachine.setIASaidUno(false);
     }
 
+    public boolean isGameEnded(){
+        return gameEnded;
+    }
+
     public boolean getHumanSaidUno() {
         return humanSaidUno;
     }
