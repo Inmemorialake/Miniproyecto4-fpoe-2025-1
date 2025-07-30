@@ -99,7 +99,7 @@ public class GameHandler implements Serializable {
         playCard(humanPlayer, card);
         PlayerStatsManager.updateStats(false, 1, true);
 
-        applySpecialCardEffect(card, true);
+        applyCardEffectAndTurn(card, true);
 
         checkWinner();
 
@@ -153,7 +153,7 @@ public class GameHandler implements Serializable {
         player.getCardsPlayer().remove(card);
     }
 
-    public void applySpecialCardEffect(Card card, boolean playedByHuman) {
+    public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {
         if (card.isPlusTwo()) {
             if (playedByHuman) {
                 machinePlayer.addCards(deck.takeCards(2));
@@ -177,6 +177,8 @@ public class GameHandler implements Serializable {
         if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {
             // El jugador que juega se queda con el turno (reverse/skip/PlusSomething)
             isHumanTurn = playedByHuman;
+        } else {
+            isHumanTurn = !playedByHuman;
         }
     }
 

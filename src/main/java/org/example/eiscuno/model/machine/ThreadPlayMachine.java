@@ -6,29 +6,28 @@ import javafx.scene.image.ImageView;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
-import org.example.eiscuno.model.player.Player;
-import org.example.eiscuno.model.table.Table;
-import org.example.eiscuno.model.deck.Deck;
 
 import java.util.Random;
 
 public class ThreadPlayMachine extends Thread {
     private final GameHandler gameHandler;
     private final ImageView tableImageView;
+    private final Runnable updateMachineCardsCallback; // <-- Nuevo callback
     private volatile boolean running = true;
 
-    public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView) {
+    public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView, Runnable updateMachineCardsCallback) {
         this.gameHandler = gameHandler;
         this.tableImageView = tableImageView;
+        this.updateMachineCardsCallback = updateMachineCardsCallback;
     }
 
     @Override
     public void run() {
         while (running) {
-            GamePauseManager.getInstance().waitIfPaused(); //Se pausa si hay algun dialog corriendo que haya que esperar
-            if (!running || gameHandler.isGameEnded()) break; //Deja de correr si el running es false o si el juego ha terminado
+            GamePauseManager.getInstance().waitIfPaused();
+            if (!running || gameHandler.isGameEnded()) break;
 
-            if (!gameHandler.getHumanTurn()) { // Si no es el turno del humano, ejecutamos su ciclo de juego
+            if (!gameHandler.getHumanTurn()) {
                 handleMachineTurn();
             }
         }
@@ -49,15 +48,16 @@ public class ThreadPlayMachine extends Thread {
             }
 
             gameHandler.checkWinner();
-            // El cambio de turno ya lo hace GameHandler.applySpecialCardEffect()
         } else {
             Card drawn = gameHandler.getDeck().takeCard();
             gameHandler.getMachinePlayer().addCard(drawn);
 
+            Platform.runLater(updateMachineCardsCallback); // <-- Mostrar carta robada
+
             if (drawn.canBePlayedOn(topCard)) {
                 playCard(drawn);
             } else {
-                gameHandler.passTurnToHuman(); // Ya no hay carta jugable
+                gameHandler.passTurnToHuman();
             }
         }
     }
@@ -75,10 +75,11 @@ public class ThreadPlayMachine extends Thread {
         GamePauseManager.getInstance().waitIfPaused();
 
         gameHandler.playCard(gameHandler.getMachinePlayer(), card);
-        gameHandler.applySpecialCardEffect(card, false);
+        gameHandler.applyCardEffectAndTurn(card, false);
 
         Platform.runLater(() -> {
             tableImageView.setImage(card.getImage());
+            updateMachineCardsCallback.run(); // <-- Mostrar carta jugada
 
             if (card.isPlusTwo() || card.isPlusFour()) {
                 gameHandler.getHumanPlayer().getCardsPlayer().forEach(Card::restoreVisuals);
