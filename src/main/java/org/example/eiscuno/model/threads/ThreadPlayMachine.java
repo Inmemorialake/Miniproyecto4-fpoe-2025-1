@@ -8,7 +8,7 @@ import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 
 /**
- * ThreadPlayMachine is a thread that handles the machine's turn in the game.
+ * ThreadPlayMachine is a thread that handles the machine's turn in the game
  * It checks if it's the machine's turn, plays a card if possible, or draws a card if not.
  * The thread runs until the game ends or it is stopped.
  */
@@ -20,7 +20,7 @@ public class ThreadPlayMachine extends Thread {
     /**
      * Constructor for ThreadPlayMachine.
      * @param gameHandler The GameHandler instance that manages the game state.
-     * @param tableImageView The ImageView where the card on the table is displayed.
+     * @param tableImageView The ImageView representing the table where cards are played.
      */
     public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView) {
         this.gameHandler = gameHandler;
@@ -28,10 +28,10 @@ public class ThreadPlayMachine extends Thread {
     }
 
     /*
-    *   This method is called when the thread starts.
-    *   It continuously checks if it's the machine's turn and handles the machine's actions accordingly.
-    *   The thread will run until the game ends or it is stopped.
-    */
+    * Starts the thread to handle the machine's turn.
+    * It continuously checks if the machine can play a card or needs to draw one.
+    * The thread will run until the game ends or it is stopped.
+    * */
     @Override
     public void run() {
         while (running) {
@@ -46,10 +46,9 @@ public class ThreadPlayMachine extends Thread {
 
     /**
      * Handles the machine's turn by checking if it can play a card or needs to draw one.
-     * If it can play a card, it plays it and applies its effect.
-     * If it cannot play any card, it draws a card and checks if it can play that one.
+     * If it can play a card, it plays the first playable card found.
+     * If it cannot play any card, it draws a card and checks if it can play that card.
      */
-    // This method is called by the run method when it's the machine's turn.
     private void handleMachineTurn() {
         sleepSafely(1500);
         GamePauseManager.getInstance().waitIfPaused();
@@ -77,14 +76,14 @@ public class ThreadPlayMachine extends Thread {
 
                 Platform.runLater(() -> tableImageView.setImage(drawn.getImage()));
             } else {
-                gameHandler.passTurnToHuman(); // Sin carta jugable, pasa turno
+                gameHandler.passTurnToHuman(); // Pass the turn to the human player if no playable card is drawn
             }
         }
     }
 
     /**
-     * Finds a playable card from the machine's hand that can be played on the top card of the table.
-     * @param topCard The current card on the table.
+     * Finds a playable card from the machine's hand that can be played on the top card.
+     * @param topCard The card currently on top of the table.
      * @return A playable card if found, otherwise null.
      */
     private Card findPlayableCard(Card topCard) {

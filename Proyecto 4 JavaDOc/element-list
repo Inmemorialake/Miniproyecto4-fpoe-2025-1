@@ -1,0 +1,11 @@
+module:org.example.eiscuno
+org.example.eiscuno
+org.example.eiscuno.controller
+org.example.eiscuno.model.card
+org.example.eiscuno.model.common
+org.example.eiscuno.model.deck
+org.example.eiscuno.model.player
+org.example.eiscuno.model.table
+org.example.eiscuno.model.threads
+org.example.eiscuno.model.unoenum
+org.example.eiscuno.view
