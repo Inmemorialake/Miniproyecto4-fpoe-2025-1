@@ -74,12 +74,14 @@ public class GameHandler implements Serializable {
             try {
                 player.addCard(deck.takeCard());
                 Platform.runLater(updateVisualCallback);
+                GameSaver.save(this);
             } catch (IllegalStateException e) {
                 // Si el mazo está vacío, lo rellenamos con las cartas en uso
                 List<Card> inUse = new ArrayList<>();
                 deck.refillDeck(inUse);
                 player.addCard(deck.takeCard());
                 Platform.runLater(updateVisualCallback);
+                GameSaver.save(this);
             }
         }
     }
@@ -136,6 +138,7 @@ public class GameHandler implements Serializable {
         table.addCardOnTheTable(card);
         player.getCardsPlayer().remove(card);
         Platform.runLater(updateVisualCallback);
+        GameSaver.save(this);
     }
 
     public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {
@@ -181,6 +184,8 @@ public class GameHandler implements Serializable {
         } else {
             isHumanTurn = !playedByHuman;
         }
+
+        GameSaver.save(this);
     }
 
     public void setColorChooser(ColorChooser colorChooser) {

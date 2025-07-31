@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import org.example.eiscuno.model.card.Card;
+import org.example.eiscuno.model.common.GameSaver;
 import org.example.eiscuno.model.threads.ThreadGameOver;
 import org.example.eiscuno.view.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
@@ -87,19 +88,13 @@ public class GameUnoController {
     }
 
     private void initVariables() {
-        File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
+        this.gameHandler = GameSaver.load();
 
-        if (saveFile.exists()) {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(saveFile))) {
-                this.gameHandler = (GameHandler) in.readObject();
-                restoreCardVisuals();
-                System.out.println("Partida cargada correctamente.");
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-                System.out.println("Fallo al cargar partida, se crea una nueva.");
-                createNewGame();
-            }
+        if (gameHandler != null) {
+            restoreCardVisuals(); //Cuando cargamos una partida, las visuales de las cartas se pierden por lo que tenemos que volver a ponerlas :3
+            System.out.println("Partida cargada correctamente.");
         } else {
+            System.out.println("Fallo al cargar partida, se crea una nueva.");
             createNewGame();
         }
     }
@@ -154,7 +149,6 @@ public class GameUnoController {
             boolean wasPlayed = gameHandler.handleHumanCardClick(card, () -> {
                 tableImageView.setImage(card.getImage());
                 updateVisuals(); // actualizar visualmente
-                saveGame();
             });
 
             if (!wasPlayed) {
@@ -228,14 +222,6 @@ public class GameUnoController {
     private void showInvalidTryToTakeCardError(){
         DialogManager.showInfoDialog("Intento inválido", "No puedes tomar una carta si tienes cartas jugables. Juega una carta primero.");
         GamePauseManager.getInstance().pauseGame();
-    }
-
-    public void saveGame() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(PlayerStatsManager.getAppDataFolder() + "/savegame.dat"))) {
-            out.writeObject(gameHandler);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

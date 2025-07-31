@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
+import org.example.eiscuno.model.common.GameSaver;
 import org.example.eiscuno.model.common.PlayerStatsManager;
 import org.example.eiscuno.view.DialogManager;
 
@@ -59,16 +60,7 @@ public class ThreadGameOver extends Thread {
 
             alert.setOnHidden(e -> {
                 // 🔄 Al cerrar el diálogo
-                File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
-                System.out.println("Eliminando archivo de guardado: " + saveFile.getAbsolutePath());
-
-                if (saveFile.exists()) {
-                    System.out.println("Archivo encontrado. Eliminando...");
-                    boolean deleted = saveFile.delete();
-                    System.out.println(deleted ? "Archivo eliminado." : "No se pudo eliminar el archivo.");
-                } else {
-                    System.out.println("Archivo de guardado no existe.");
-                }
+                GameSaver.deleteSaveFile();
 
                 System.out.println("Saliendo de la aplicación...");
                 System.exit(0);
