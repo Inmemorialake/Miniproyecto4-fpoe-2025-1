@@ -168,4 +168,13 @@ public class Card implements Serializable {
         this.image = new Image(String.valueOf(getClass().getResource(url)));
         this.cardImageView = createCardImageView();
     }
+
+    public void setColor(String orDefault) {
+        if (orDefault == null || orDefault.isEmpty()) {
+            this.color = "BLACK"; // Default color for wild cards
+        } else {
+            this.color = orDefault;
+        }
+        restoreVisuals(); // Update visuals after setting color
+    }
 }

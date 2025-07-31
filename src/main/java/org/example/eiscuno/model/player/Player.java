@@ -64,4 +64,15 @@ public class Player implements IPlayer, Serializable {
     public String getTypePlayer() {
         return typePlayer;
     }
+
+    public void addCards(Object o) {
+        if (o instanceof ArrayList) {
+            ArrayList<Card> cards = (ArrayList<Card>) o;
+            cardsPlayer.addAll(cards);
+        } else if (o instanceof Card) {
+            cardsPlayer.add((Card) o);
+        } else {
+            throw new IllegalArgumentException("Unsupported type for adding cards");
+        }
+    }
 }

@@ -79,7 +79,7 @@ public class HomeUnoController {
 
         if (result.isPresent()) {
             if (result.get() == continuarBtn) {
-                launchGameScene(); // simplemente lanza la escena, el controlador cargará el estado
+                launchGameScene(); // Launch the game scene to continue the saved game
             } else if (result.get() == nuevaBtn) {
                 // Eliminar archivo guardado y lanzar escena
                 if (saveFile.delete()) {
@@ -104,8 +104,14 @@ public class HomeUnoController {
 
             Stage currentStage = (Stage) unoLogo.getScene().getWindow();
             currentStage.setScene(newScene);
+            currentStage.show(); // Asegúrate de mostrar la nueva escena
         } catch (IOException e) {
             e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Error al cargar la escena");
+            errorAlert.setHeaderText("No se pudo cargar la escena del juego.");
+            errorAlert.setContentText("Por favor, verifica el archivo FXML y vuelve a intentarlo.");
+            errorAlert.showAndWait();
         }
     }
 }
