@@ -1,5 +1,6 @@
 package org.example.eiscuno.controller;
 
+// Imports
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,24 +22,34 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Controller for the home scene of the Uno game.
+ * Displays player statistics and handles game start logic.
+ */
 public class HomeUnoController {
 
+    // FXML elements
     @FXML
     private ImageView unoLogo;
 
     @FXML
     private Label cardsLabel, gamesPlayedLabel, gamesWonLabel;
 
+    /**
+     * Initializes the controller by loading the Uno logo and player statistics from a CSV file.
+     */
     @FXML
     public void initialize() {
         unoLogo.setImage(new Image(getClass().getResource(EISCUnoEnum.UNO.getFilePath()).toExternalForm()));
 
-        // Leer desde el CSV
+        // Read player statistics from CSV file
         File file = new File(PlayerStatsManager.getAppDataFolder(), "player_stats.csv");
 
+        // If the file exist, read the statistics
+        // and set the labels accordingly
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                reader.readLine(); // encabezado
+                reader.readLine(); // Skip the header line
                 String data = reader.readLine();
                 if (data != null) {
                     String[] parts = data.split(",");
@@ -48,30 +59,36 @@ public class HomeUnoController {
                     gamesPlayedLabel.setStyle("-fx-font-weight: bold;");
                     gamesWonLabel.setText( parts[1]);
                     gamesWonLabel.setStyle("-fx-font-weight: bold;");
-                    // Podrías añadir también las cartas colocadas si quieres mostrar eso
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(); // Handle the exception if the file cannot be read
             }
         }
     }
 
+    /**
+     * Handles the action when the "Play Game" button is clicked.
+     * Checks for existing saved games and prompts the user accordingly.
+     */
     @FXML
     private void onPlayGame() {
+        // Check if there is a saved game file
         File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
 
-        // Si no existe partida guardada, lanza directamente la escena del juego
+        // If the file does not exist, launch the game scene directly
         if (!saveFile.exists()) {
             launchGameScene();
             return;
         }
 
-        // Si existe, preguntamos al jugador
+        // If the file exists, prompt the user with options
+        // to continue the saved game, start a new game, or cancel
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Partida guardada encontrada");
         alert.setHeaderText("¿Qué deseas hacer?");
         alert.setContentText("Se encontró una partida guardada. ¿Quieres continuarla o comenzar una nueva?");
 
+        // Custom button types for the alert
         ButtonType continuarBtn = new ButtonType("Continuar");
         ButtonType nuevaBtn = new ButtonType("Nueva partida");
         ButtonType cancelarBtn = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -82,9 +99,10 @@ public class HomeUnoController {
 
         if (result.isPresent()) {
             if (result.get() == continuarBtn) {
-                launchGameScene(); // simplemente lanza la escena, el controlador cargará el estado
+                launchGameScene(); // Launch the game scene to continue the saved game
             } else if (result.get() == nuevaBtn) {
-                // Eliminar archivo guardado y lanzar escena
+                // If the user chooses to start a new game,
+                // delete the existing save file and launch the game scene
                 if (saveFile.delete()) {
                     launchGameScene();
                 } else {
@@ -95,11 +113,15 @@ public class HomeUnoController {
                     error.showAndWait();
                 }
             }
-            // Si presiona cancelar, no se hace nada
+            // If the user cancels, do nothing
         }
     }
 
+    /**
+     * Launches the game scene by loading the FXML file and setting it to the current stage.
+     */
     private void launchGameScene() {
+        // Load the game scene from the FXML file
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/eiscuno/game-uno-view.fxml"));
             Parent root = loader.load();
@@ -108,7 +130,7 @@ public class HomeUnoController {
             Stage currentStage = (Stage) unoLogo.getScene().getWindow();
             currentStage.setScene(newScene);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Handle the exception if the FXML file cannot be loaded
         }
     }
 }
