@@ -1,5 +1,7 @@
 package org.example.eiscuno.model.threads;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 import org.example.eiscuno.model.common.PlayerStatsManager;
@@ -24,41 +26,56 @@ public class ThreadGameOver extends Thread {
                 Thread.currentThread().interrupt();
             }
         }
-        switch (gameHandler.checkWinner()){
-            case "HUMAN": // Human player wins
-                DialogManager.showInfoDialog("¡Has ganado!", "¡Felicidades! Has ganado el juego.");
+
+        // Mensajes según resultado
+        String title, message;
+
+        switch (gameHandler.checkWinner()) {
+            case "HUMAN":
+                title = "¡Has ganado!";
+                message = "¡Felicidades! Has ganado el juego.";
+                PlayerStatsManager.updateStats(true,0,false);
                 System.out.println("El jugador humano ha ganado el juego.");
-                GamePauseManager.getInstance().pauseGame();
-                System.out.println("El juego ha terminado, se ha pausado el juego.");
                 break;
-            case "MACHINE": // Machine player wins
-                DialogManager.showInfoDialog("Has perdido", "Ha ganado la IA. suerte la proxima vez.");
+            case "MACHINE":
+                title = "Has perdido";
+                message = "Ha ganado la IA. Suerte la próxima vez.";
+                PlayerStatsManager.updateStats(false,0,false);
                 System.out.println("La IA ha ganado el juego.");
-                GamePauseManager.getInstance().pauseGame();
-                System.out.println("El juego ha terminado, se ha pausado el juego.");
                 break;
             default:
-                System.out.println("No deberia usted estar viendo este mensaje, empiece a rezar");
-                DialogManager.showInfoDialog("Error", "No se ha podido determinar el ganador del juego");
+                title = "Error";
+                message = "No se ha podido determinar el ganador del juego.";
                 System.out.println("Error al determinar el ganador del juego.");
-                GamePauseManager.getInstance().pauseGame();
-                System.out.println("El juego ha terminado, se ha pausado el juego.");
+                break;
         }
 
-        // Delete the save file if it exists
-        File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
-        System.out.println("Eliminando archivo de guardado: " + saveFile.getAbsolutePath());
-        if (saveFile.exists()) {
-            System.out.println("Archivo de guardado encontrado, eliminando...");
-            saveFile.delete();
-            System.out.println("Archivo de guardado eliminado.");
-        } else {
-            System.out.println("andamos curseados. El archivo de guardado no existe.");
-        }
+        // Mostrar diálogo en hilo JavaFX
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
 
-        // Exit the application
-        System.out.println("Saliendo de la aplicacion...");
-        System.exit(0);
+            alert.setOnHidden(e -> {
+                // 🔄 Al cerrar el diálogo
+                File saveFile = new File(PlayerStatsManager.getAppDataFolder(), "savegame.dat");
+                System.out.println("Eliminando archivo de guardado: " + saveFile.getAbsolutePath());
 
+                if (saveFile.exists()) {
+                    System.out.println("Archivo encontrado. Eliminando...");
+                    boolean deleted = saveFile.delete();
+                    System.out.println(deleted ? "Archivo eliminado." : "No se pudo eliminar el archivo.");
+                } else {
+                    System.out.println("Archivo de guardado no existe.");
+                }
+
+                System.out.println("Saliendo de la aplicación...");
+                System.exit(0);
+            });
+
+            alert.show();
+        });
+        GamePauseManager.getInstance().pauseGame();
     }
 }

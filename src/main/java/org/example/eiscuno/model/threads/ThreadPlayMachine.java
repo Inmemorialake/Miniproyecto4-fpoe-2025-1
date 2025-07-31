@@ -1,24 +1,21 @@
 package org.example.eiscuno.model.threads;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 
-import java.util.Random;
-
 public class ThreadPlayMachine extends Thread {
     private final GameHandler gameHandler;
     private final ImageView tableImageView;
-    private final Runnable updateMachineCardsCallback; // <-- Nuevo callback
+    private final Runnable updateVisualsCallback; // <-- Nuevo callback
     private volatile boolean running = true;
 
-    public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView, Runnable updateMachineCardsCallback) {
+    public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView, Runnable updateVisualsCallback) {
         this.gameHandler = gameHandler;
         this.tableImageView = tableImageView;
-        this.updateMachineCardsCallback = updateMachineCardsCallback;
+        this.updateVisualsCallback = updateVisualsCallback;
     }
 
     @Override
@@ -42,13 +39,12 @@ public class ThreadPlayMachine extends Thread {
 
         if (cardToPlay != null) {
             playCard(cardToPlay);
-
             gameHandler.checkWinner();
         } else {
             Card drawn = gameHandler.getDeck().takeCard();
             gameHandler.getMachinePlayer().addCard(drawn);
 
-            Platform.runLater(updateMachineCardsCallback); // <-- Mostrar carta robada
+            Platform.runLater(updateVisualsCallback); // <-- Mostrar carta robada
             gameHandler.passTurnToHuman();
         }
     }
@@ -70,11 +66,7 @@ public class ThreadPlayMachine extends Thread {
 
         Platform.runLater(() -> {
             tableImageView.setImage(card.getImage());
-            updateMachineCardsCallback.run(); // <-- Mostrar carta jugada
-
-            if (card.isPlusTwo() || card.isPlusFour()) {
-                gameHandler.getHumanPlayer().getCardsPlayer().forEach(Card::restoreVisuals);
-            }
+            updateVisualsCallback.run(); // <-- Mostrar carta jugada
         });
     }
 

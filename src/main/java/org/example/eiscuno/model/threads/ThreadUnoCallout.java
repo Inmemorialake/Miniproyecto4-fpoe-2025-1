@@ -33,12 +33,16 @@ public class ThreadUnoCallout extends Thread {
             if (humanCards > 1) {
                 gameHandler.setHumanSaidUno(false);
                 humanUnoHandled = false;
-                Platform.runLater(() -> showUnoButtonCallback.accept(false));
             }
 
             if (iaCards > 1) {
                 gameHandler.setIASaidUno(false);
                 iaUnoHandled = false;
+            }
+
+            //Escondemos el boton si no se cumplen las condiciones para mostrarlo (hay mejores maneras, pero solo se me ocurre esta por el momento xd)
+            if(!(humanCards == 1 && !gameHandler.getHumanSaidUno()) && !(iaCards == 1 && !gameHandler.getIASaidUno())){
+                Platform.runLater(() -> showUnoButtonCallback.accept(false));
             }
 
             // --- HUMANO ---
@@ -50,7 +54,6 @@ public class ThreadUnoCallout extends Thread {
                     try {
                         Thread.sleep(3000);
                         GamePauseManager.getInstance().waitIfPaused();
-
                         if (!gameHandler.getHumanSaidUno() && gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {
                             gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);
                             DialogManager.showInfoDialog("¡La IA te dijo UNO!", "¡La IA te gritó UNO! Tomas 1 carta como penalización.");
@@ -63,6 +66,7 @@ public class ThreadUnoCallout extends Thread {
             // --- IA ---
             if (iaCards == 1 && !gameHandler.getIASaidUno() && !iaUnoHandled) {
                 iaUnoHandled = true;
+                Platform.runLater(() -> showUnoButtonCallback.accept(true));
 
                 new Thread(() -> {
                     try {

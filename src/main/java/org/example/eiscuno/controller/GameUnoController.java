@@ -67,8 +67,7 @@ public class GameUnoController {
         System.out.println("funka");
         initVariables();
         System.out.println("funka");
-        printHumanPlayerCards();
-        printMachinePlayerCards();
+        updateVisuals();
         System.out.println("funka");
         if (!gameHandler.getTable().getCards().isEmpty()) {
             tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
@@ -80,7 +79,7 @@ public class GameUnoController {
 
     public void startThreads() {
         threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));
-        threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView, this::printMachinePlayerCards);
+        threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView, this::updateVisuals);
         treadGameOver = new ThreadGameOver(gameHandler);
         Thread u = new Thread(treadGameOver, "ThreadGameOver");
         u.start();
@@ -109,7 +108,7 @@ public class GameUnoController {
     }
 
     private void createNewGame() {
-        this.gameHandler = GameHandler.createNewGame();
+        this.gameHandler = GameHandler.createNewGame(this::updateVisuals);
     }
 
     private void restoreCardVisuals() {
@@ -117,6 +116,12 @@ public class GameUnoController {
         gameHandler.getMachinePlayer().getCardsPlayer().forEach(Card::restoreVisuals);
         gameHandler.getTable().getCards().forEach(Card::restoreVisuals);
         gameHandler.getDeck().getAllCards().forEach(Card::restoreVisuals);
+    }
+
+    public void updateVisuals(){
+        printHumanPlayerCards();
+        printMachinePlayerCards();
+        updateCurrentColorUI();
     }
 
     public void printHumanPlayerCards() {
@@ -129,8 +134,6 @@ public class GameUnoController {
             attachClickHandlerToCard(card, cardImageView); // Mover comportamiento a una función aparte
             gridPaneCardsPlayer.add(cardImageView, i, 0);
         }
-
-        updateCurrentColorUI();
     }
 
     public void printMachinePlayerCards() {
@@ -144,12 +147,16 @@ public class GameUnoController {
         }
     }
 
+    private void updateCurrentColorUI() {
+        String color = gameHandler.getCurrentCardOnTable().getColor();
+        labelCurrentColor.setText("Color actual: " + (color != null ? color : "-"));
+    }
+
     private void attachClickHandlerToCard(Card card, ImageView cardImageView) {
         cardImageView.setOnMouseClicked(event -> {
             boolean wasPlayed = gameHandler.handleHumanCardClick(card, () -> {
                 tableImageView.setImage(card.getImage());
-                printHumanPlayerCards(); // actualizar visualmente
-                printMachinePlayerCards();
+                updateVisuals(); // actualizar visualmente
                 saveGame();
             });
 
@@ -192,11 +199,6 @@ public class GameUnoController {
             GamePauseManager.getInstance().pauseGame();
             return;
         }
-    }
-
-    private void updateCurrentColorUI() {
-        String color = gameHandler.getCurrentCardOnTable().getColor();
-        labelCurrentColor.setText("Color actual: " + (color != null ? color : "-"));
     }
 
     private void showTurnError() {

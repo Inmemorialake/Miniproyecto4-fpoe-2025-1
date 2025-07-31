@@ -18,6 +18,7 @@ public class GameHandler implements Serializable {
     private final Player machinePlayer;
     private final Deck deck;
     private final Table table;
+    private transient Runnable updateVisualCallback;
 
     private boolean iaSaidUno;
     private boolean isHumanTurn;
@@ -28,11 +29,12 @@ public class GameHandler implements Serializable {
 
     private transient ColorChooser colorChooser;
 
-    public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {
+    public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno, Runnable updateVisualCallback) {
         this.humanPlayer = human;
         this.machinePlayer = machine;
         this.deck = deck;
         this.table = table;
+        this.updateVisualCallback = updateVisualCallback;
         this.iaSaidUno = iaSaidUno;
         this.isHumanTurn = isHumanTurn;
         this.humanSaidUno = humanSaidUno;
@@ -40,12 +42,12 @@ public class GameHandler implements Serializable {
         this.winner = null;
     }
 
-    public static GameHandler createNewGame() {
+    public static GameHandler createNewGame(Runnable updateVisualCallback) {
         Player human = new Player("HUMAN_PLAYER");
         Player machine = new Player("MACHINE_PLAYER");
         Deck deck = new Deck();
         Table table = new Table();
-        GameHandler handler = new GameHandler(human, machine, deck, table, false, true, false);
+        GameHandler handler = new GameHandler(human, machine, deck, table, false, true, false, updateVisualCallback);
         handler.startGame();
         return handler;
     }
@@ -57,7 +59,7 @@ public class GameHandler implements Serializable {
             } else {
                 machinePlayer.addCard(deck.takeCard());
             }
-        } //Sexo anal
+        }
 
         // Seleccionar carta inicial que no sea especial
         Card initialCard;
@@ -71,22 +73,14 @@ public class GameHandler implements Serializable {
         for (int i = 0; i < numberOfCards; i++) {
             try {
                 player.addCard(deck.takeCard());
+                Platform.runLater(updateVisualCallback);
             } catch (IllegalStateException e) {
                 // Si el mazo está vacío, lo rellenamos con las cartas en uso
                 List<Card> inUse = new ArrayList<>();
-                inUse.addAll(humanPlayer.getCardsPlayer());
-                inUse.addAll(machinePlayer.getCardsPlayer());
                 deck.refillDeck(inUse);
                 player.addCard(deck.takeCard());
+                Platform.runLater(updateVisualCallback);
             }
-        }
-    }
-
-    public void haveSungUno(String playerWhoSang) {
-        if ("HUMAN_PLAYER".equals(playerWhoSang)) {
-            machinePlayer.addCard(deck.takeCard());
-        } else {
-            humanPlayer.addCard(deck.takeCard());
         }
     }
 
@@ -105,19 +99,6 @@ public class GameHandler implements Serializable {
         applyCardEffectAndTurn(card, true);
 
         checkWinner();
-
-        // Verificar UNO
-        if (humanPlayer.getCardsPlayer().size() == 1 && !humanSaidUno) {
-            // lanzar temporizador si no dijo UNO
-            new Thread(() -> {
-                try {
-                    Thread.sleep(3000);
-                    if (!humanSaidUno && humanPlayer.getCardsPlayer().size() == 1) {
-                        eatCard(humanPlayer, 1);
-                    }
-                } catch (InterruptedException ignored) {}
-            }).start();
-        }
 
         if (!card.isSkipOrReverse() && !card.isPlusTwo() && !card.isPlusFour()) {
             // Si no es una carta especial, pasamos el turno a la máquina
@@ -154,6 +135,7 @@ public class GameHandler implements Serializable {
     public void playCard(Player player, Card card) {
         table.addCardOnTheTable(card);
         player.getCardsPlayer().remove(card);
+        Platform.runLater(updateVisualCallback);
     }
 
     public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {
@@ -187,22 +169,19 @@ public class GameHandler implements Serializable {
             final String[] selectedColor = new String[1];
 
             if (playedByHuman) {
-                Platform.runLater(() -> {
-                    ChoiceDialog<String> dialog = new ChoiceDialog<>("RED", Arrays.asList("RED", "GREEN", "BLUE", "YELLOW"));
-                    dialog.setTitle("Cambio de color");
-                    dialog.setHeaderText(null);
-                    dialog.setContentText("Elige el color para continuar:");
+                ChoiceDialog<String> dialog = new ChoiceDialog<>("RED", Arrays.asList("RED", "GREEN", "BLUE", "YELLOW"));
+                dialog.setTitle("Cambio de color");
+                dialog.setHeaderText(null);
+                dialog.setContentText("Elige el color para continuar:");
 
-                    dialog.setOnHidden(e -> {
-                        GamePauseManager.getInstance().resumeGame(); // 3. Reanudamos todos los hilos
-                        latch.countDown(); // liberamos este hilo
-                    });
-
-                    dialog.showAndWait().ifPresent(color -> {
-                        selectedColor[0] = color.toUpperCase();
-                    });
+                dialog.setOnHidden(e -> {
+                    GamePauseManager.getInstance().resumeGame(); // 3. Reanudamos todos los hilos
+                    latch.countDown(); // liberamos este hilo
                 });
-                GamePauseManager.getInstance().pauseGame(); // Waza
+
+                dialog.showAndWait().ifPresent(color -> {
+                    selectedColor[0] = color.toUpperCase();
+                });
             }
 
             card.setColor(selectedColor[0] != null? selectedColor[0] : newColor);
