@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.player;
 
+// Imports
 import org.example.eiscuno.model.card.Card;
 
 import java.util.ArrayList;

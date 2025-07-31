@@ -1,5 +1,6 @@
 package org.example.eiscuno;
 
+// Imports
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.example.eiscuno.view.GameUnoStage;

@@ -1,13 +1,15 @@
 package org.example.eiscuno.model.player;
 
+// Imports
 import org.example.eiscuno.model.card.Card;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Represents a player in the Uno game.
  */
-public class Player implements IPlayer {
+public class Player implements IPlayer, Serializable {
     private ArrayList<Card> cardsPlayer;
     private String typePlayer;
 
@@ -60,7 +62,28 @@ public class Player implements IPlayer {
         return cardsPlayer.get(index);
     }
 
+    /**
+     * Returns the type of player (e.g., "human", "computer").
+     * @return The type of player as a String.
+     */
     public String getTypePlayer() {
         return typePlayer;
+    }
+
+    /**
+     * Adds cards to the player's hand.
+     * This method can accept either a single Card object or an ArrayList of Card objects.
+     *
+     * @param o The card(s) to be added, either a single Card or an ArrayList of Cards.
+     */
+    public void addCards(Object o) {
+        if (o instanceof ArrayList) {
+            ArrayList<Card> cards = (ArrayList<Card>) o;
+            cardsPlayer.addAll(cards);
+        } else if (o instanceof Card) {
+            cardsPlayer.add((Card) o);
+        } else {
+            throw new IllegalArgumentException("Unsupported type for adding cards");
+        }
     }
 }

@@ -1,15 +1,17 @@
 package org.example.eiscuno.model.deck;
 
+// Imports
 import org.example.eiscuno.model.unoenum.EISCUnoEnum;
 import org.example.eiscuno.model.card.Card;
 
-import java.util.Collections;
-import java.util.Stack;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a deck of Uno cards.
  */
-public class Deck {
+public class Deck implements Serializable {
     private Stack<Card> deckOfCards;
 
     /**
@@ -21,7 +23,7 @@ public class Deck {
     }
 
     /**
-     * Initializes the deck with cards based on the EISCUnoEnum values.
+     * Initializes the deck with all possible cards.
      */
     private void initializeDeck() {
         for (EISCUnoEnum cardEnum : EISCUnoEnum.values()) {
@@ -30,10 +32,11 @@ public class Deck {
                     cardEnum.name().startsWith("BLUE_") ||
                     cardEnum.name().startsWith("RED_") ||
                     cardEnum.name().startsWith("SKIP_") ||
-                    cardEnum.name().startsWith("RESERVE_") ||
+                    cardEnum.name().startsWith("REVERSE_") ||
                     cardEnum.name().startsWith("TWO_WILD_DRAW_") ||
                     cardEnum.name().equals("FOUR_WILD_DRAW") ||
                     cardEnum.name().equals("WILD")) {
+
                 Card card = new Card(cardEnum.getFilePath(), getCardValue(cardEnum.name()), getCardColor(cardEnum.name()));
                 deckOfCards.push(card);
             }
@@ -41,6 +44,63 @@ public class Deck {
         Collections.shuffle(deckOfCards);
     }
 
+    /**
+     * Attempts to take a card from the deck.
+     * If the deck is empty, throws exception (can be improved later).
+     */
+    public Card takeCard() {
+        if (deckOfCards.isEmpty()) {
+            throw new IllegalStateException("El mazo está vacío, pero tranquilos, se puede reponer, intenta de nuevo");
+        }
+        return deckOfCards.pop();
+    }
+
+    /**
+     * Returns a list of all cards in the deck.
+     * @return a list of all cards.
+     */
+    public List<Card> getAllCards() {
+        return new ArrayList<>(deckOfCards);
+    }
+
+    /**
+     * Replenishes the deck with cards, excluding specified cards.
+     * @param excluded a list of cards to exclude from the replenishment.
+     */
+    public void refillDeck(List<Card> excluded) {
+        System.out.println("Estamos reponiendo el mazo");
+        Set<String> excludedUrls = excluded.stream()
+                .map(Card::getUrl)
+                .collect(Collectors.toSet());
+
+        deckOfCards.clear();
+
+        for (EISCUnoEnum cardEnum : EISCUnoEnum.values()) {
+            if (cardEnum.name().startsWith("GREEN_") ||
+                    cardEnum.name().startsWith("YELLOW_") ||
+                    cardEnum.name().startsWith("BLUE_") ||
+                    cardEnum.name().startsWith("RED_") ||
+                    cardEnum.name().startsWith("SKIP_") ||
+                    cardEnum.name().startsWith("REVERSE_") ||
+                    cardEnum.name().startsWith("TWO_WILD_DRAW_") ||
+                    cardEnum.name().equals("FOUR_WILD_DRAW") ||
+                    cardEnum.name().equals("WILD")) {
+
+                String url = cardEnum.getFilePath();
+                if (!excludedUrls.contains(url)) {
+                    Card card = new Card(url, getCardValue(cardEnum.name()), getCardColor(cardEnum.name()));
+                    deckOfCards.push(card);
+                }
+            }
+        }
+
+        Collections.shuffle(deckOfCards);
+    }
+
+    /**
+     * Returns the number of cards in the deck.
+     * @return the size of the deck.
+     */
     private String getCardValue(String name) {
         if (name.endsWith("0")){
             return "0";
@@ -68,14 +128,19 @@ public class Deck {
 
     }
 
+    /**
+     * Returns the color of the card based on its name.
+     * @param name the name of the card.
+     * @return the color of the card.
+     */
     private String getCardColor(String name){
-        if(name.startsWith("GREEN")){
+        if(name.contains("GREEN")){
             return "GREEN";
-        } else if(name.startsWith("YELLOW")){
+        } else if(name.contains("YELLOW")){
             return "YELLOW";
-        } else if(name.startsWith("BLUE")){
+        } else if(name.contains("BLUE")){
             return "BLUE";
-        } else if(name.startsWith("RED")){
+        } else if(name.contains("RED")){
             return "RED";
         } else {
             return null;
@@ -83,24 +148,19 @@ public class Deck {
     }
 
     /**
-     * Takes a card from the top of the deck.
-     *
-     * @return the card from the top of the deck
-     * @throws IllegalStateException if the deck is empty
+     * Takes a specified number of cards from the deck.
+     * @param cardCount the number of cards to take.
+     * @return a list of taken cards.
      */
-    public Card takeCard() {
-        if (deckOfCards.isEmpty()) {
-            throw new IllegalStateException("No hay más cartas en el mazo.");
+    public Object takeCards(int cardCount) {
+        List<Card> takenCards = new ArrayList<>();
+        for (int j = 0; j < cardCount; j++) {
+            if (!deckOfCards.isEmpty()) {
+                takenCards.add(deckOfCards.pop());
+            } else {
+                throw new IllegalStateException("El mazo está vacío y no hay forma de reponerlo.");
+            }
         }
-        return deckOfCards.pop();
-    }
-
-    /**
-     * Checks if the deck is empty.
-     *
-     * @return true if the deck is empty, false otherwise
-     */
-    public boolean isEmpty() {
-        return deckOfCards.isEmpty();
+        return takenCards;
     }
 }

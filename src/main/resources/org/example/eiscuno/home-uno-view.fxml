@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1126.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.eiscuno.controller.HomeUnoController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="800.0" style="-fx-background-color: #ffaa00;">
+         <children>
+                <ImageView fx:id="unoLogo" fitHeight="300" fitWidth="338.0" pickOnBounds="true" preserveRatio="true">
+               <VBox.margin>
+                  <Insets bottom="50.0" top="150.0" />
+               </VBox.margin>
+            </ImageView>
+                <Button fx:id="playButton" onAction="#onPlayGame" prefHeight="51.0" prefWidth="142.0" style="-fx-font-size: 20; -fx-font-weight: Bold; -fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 16;" text="JUGAR">
+
+                                      <VBox.margin>
+                        <Insets bottom="20" left="0" right="0" top="0" />
+                    </VBox.margin>
+               <font>
+                  <Font name="Arial Rounded MT Bold" size="62.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+                </Button>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
+         </children>
+      </VBox>
+      <HBox alignment="CENTER" prefHeight="800.0" prefWidth="787.0" style="-fx-background-color: white;">
+         <children>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="420.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/geenCard.PNG" />
+                           </image>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </ImageView>
+                            <Label fx:id="cardsLabel" style="-fx-font-size: 40; -fx-font-weight: bold;" textFill="#55aa55">
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                           <font>
+                              <Font name="Arial Rounded MT Bold" size="40.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cartas puestas" wrappingWidth="151.73675918579102">
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="20.0" />
+                     </font>
+                  </Text>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="420.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/redCard.PNG" />
+                           </image>
+                           <StackPane.margin>
+                              <Insets left="25.0" right="25.0" />
+                           </StackPane.margin>
+                        </ImageView>
+                            <Label fx:id="gamesPlayedLabel" style="-fx-font-size: 40; -fx-font-weight: bold;" textFill="#ff5555">
+                           <padding>
+                              <Insets left="25.0" right="25.0" />
+                           </padding>
+                           <font>
+                              <Font name="Arial Rounded MT Bold" size="40.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Partidas jugadas">
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </Text>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="420.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/blueCard.PNG" />
+                           </image>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </ImageView>
+                            <Label fx:id="gamesWonLabel" style="-fx-font-size: 40; -fx-font-weight: bold;" textFill="#5555ff">
+                           <font>
+                              <Font name="Arial Rounded MT Bold" size="40.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Partidas ganadas">
+                     <font>
+                        <Font name="Arial Rounded MT Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
+                  </Text>
+               </children>
+            </VBox>
+         </children></HBox>
+   </children>
+</HBox>

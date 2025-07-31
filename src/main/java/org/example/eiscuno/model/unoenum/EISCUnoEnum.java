@@ -22,10 +22,6 @@ public enum EISCUnoEnum {
     SKIP_YELLOW("cards-uno/skip_yellow.png"),
     SKIP_GREEN("cards-uno/skip_green.png"),
     SKIP_RED("cards-uno/skip_red.png"),
-    RESERVE_BLUE("cards-uno/reserve_blue.png"),
-    RESERVE_YELLOW("cards-uno/reserve_yellow.png"),
-    RESERVE_GREEN("cards-uno/reserve_green.png"),
-    RESERVE_RED("cards-uno/reserve_red.png"),
     GREEN_0("cards-uno/0_green.png"),
     GREEN_1("cards-uno/1_green.png"),
     GREEN_2("cards-uno/2_green.png"),
@@ -65,7 +61,11 @@ public enum EISCUnoEnum {
     RED_6("cards-uno/6_red.png"),
     RED_7("cards-uno/7_red.png"),
     RED_8("cards-uno/8_red.png"),
-    RED_9("cards-uno/9_red.png");
+    RED_9("cards-uno/9_red.png"),
+    REVERSE_BLUE("cards-uno/reverse_blue.png"),
+    REVERSE_YELLOW("cards-uno/reverse_yellow.png"),
+    REVERSE_GREEN("cards-uno/reverse_green.png"),
+    REVERSE_RED("cards-uno/reverse_red.png");
 
     private final String filePath;
     private static final String PATH = "/org/example/eiscuno/";
