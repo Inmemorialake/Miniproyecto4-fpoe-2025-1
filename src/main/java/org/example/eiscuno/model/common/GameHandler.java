@@ -154,13 +154,6 @@ public class GameHandler implements Serializable {
     }
 
     public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {
-        Runnable refreshUI = () -> {
-            if (!playedByHuman) {
-                // Si el humano fue el que recibió cartas, reiniciamos la vista
-                if (updateVisualCallback != null) updateVisualCallback.run();
-            }
-        };
-
         if (card.isPlusTwo()) {
             if (playedByHuman) {
                 eatCard(machinePlayer, 2);
