@@ -1,7 +1,7 @@
 package org.example.eiscuno.model.common;
 
+// Imports
 import javafx.application.Platform;
-import javafx.scene.control.ChoiceDialog;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.player.Player;
@@ -10,8 +10,11 @@ import org.example.eiscuno.view.DialogManager;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
+/**
+ * Handles the game logic and state for the EISC Uno game.
+ * This class manages players, deck, table, and game flow.
+ */
 public class GameHandler implements Serializable {
 
     private final Player humanPlayer;
@@ -30,6 +33,19 @@ public class GameHandler implements Serializable {
 
     private transient ColorChooser colorChooser;
 
+    /**
+     * Constructs a GameHandler with the specified players, deck, table, and game state.
+     *
+     * @param human The human player.
+     * @param machine The machine player.
+     * @param deck The deck of cards.
+     * @param table The table where cards are played.
+     * @param iaSaidUno Indicates if the AI has said UNO.
+     * @param isHumanTurn Indicates if it's the human player's turn.
+     * @param humanSaidUno Indicates if the human player has said UNO.
+     * @param updateVisualCallback Callback to update the visual representation of the game.
+     * @param resetCardScroll Callback to reset card scrolling in the UI.
+     */
     public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno, Runnable updateVisualCallback, Runnable resetCardScroll) {
         this.humanPlayer = human;
         this.machinePlayer = machine;
@@ -44,6 +60,13 @@ public class GameHandler implements Serializable {
         this.winner = null;
     }
 
+    /**
+     * Creates a new game with default players, deck, and table.
+     *
+     * @param updateVisualCallback Callback to update the visual representation of the game.
+     * @param resetCardScroll Callback to reset card scrolling in the UI.
+     * @return A new instance of GameHandler.
+     */
     public static GameHandler createNewGame(Runnable updateVisualCallback, Runnable resetCardScroll) {
         Player human = new Player("HUMAN_PLAYER");
         Player machine = new Player("MACHINE_PLAYER");
@@ -54,6 +77,11 @@ public class GameHandler implements Serializable {
         return handler;
     }
 
+    /**
+     * Starts the game by dealing cards to players and setting the initial card on the table.
+     * Deals 5 cards to the human player and 5 cards to the machine player.
+     * The initial card on the table is a non-special card.
+     */
     public void startGame() {
         for (int i = 0; i < 10; i++) {
             if (i < 5) {
@@ -63,7 +91,7 @@ public class GameHandler implements Serializable {
             }
         }
 
-        // Seleccionar carta inicial que no sea especial
+        // Set the initial card on the table, ensuring it's not a special card
         Card initialCard;
         do {
             initialCard = deck.takeCard();
@@ -71,6 +99,13 @@ public class GameHandler implements Serializable {
         table.addCardOnTheTable(initialCard);
     }
 
+    /**
+     * Eats a specified number of cards from the deck and adds them to the player's hand.
+     * If the deck is empty, it refills the deck with cards in use before taking cards.
+     *
+     * @param player The player who will receive the cards.
+     * @param numberOfCards The number of cards to take from the deck.
+     */
     public void eatCard(Player player, int numberOfCards) {
         for (int i = 0; i < numberOfCards; i++) {
             try {
@@ -81,7 +116,7 @@ public class GameHandler implements Serializable {
                 });
                 GameSaver.save(this);
             } catch (IllegalStateException e) {
-                // Si el mazo está vacío, lo rellenamos con las cartas en uso
+                // If the deck is empty, refill it and try again
                 List<Card> inUse = new ArrayList<>();
                 deck.refillDeck(inUse);
                 player.addCard(deck.takeCard());
@@ -94,9 +129,19 @@ public class GameHandler implements Serializable {
         }
     }
 
+    /**
+     * Handles the click event on a human player's card.
+     * Validates if the card can be played on the current card on the table.
+     * If valid, plays the card, applies its effect, and checks for a winner.
+     * If the card is not a special card, it passes the turn to the machine player.
+     *
+     * @param card The card clicked by the human player.
+     * @param onFinish A callback to run after handling the card click.
+     * @return true if the card was played successfully, false otherwise.
+     */
     public boolean handleHumanCardClick(Card card, Runnable onFinish) {
         if (!isHumanTurn) {
-            return false; // para que el controlador sepa si fue un movimiento válido
+            return false;
         }
 
         if (!card.canBePlayedOn(getCurrentCardOnTable())) {
@@ -111,7 +156,7 @@ public class GameHandler implements Serializable {
         checkWinner();
 
         if (!card.isSkipOrReverse() && !card.isPlusTwo() && !card.isPlusFour()) {
-            // Si no es una carta especial, pasamos el turno a la máquina
+            // If the card is not a special card, pass the turn to the machine player
             passTurnToMachine();
         }
 
@@ -122,8 +167,15 @@ public class GameHandler implements Serializable {
         return true;
     }
 
+    /**
+     * Gets the current visible cards for the human player starting from a specified position.
+     * The cards are reversed to show the most recent cards first.
+     *
+     * @param posInitCardToShow The starting position of the card to show.
+     * @return An array of visible cards for the human player.
+     */
     public Card[] getCurrentVisibleCardsHumanPlayer(int posInitCardToShow) {
-        List<Card> allCards = new ArrayList<>(humanPlayer.getCardsPlayer()); // <-- Copia
+        List<Card> allCards = new ArrayList<>(humanPlayer.getCardsPlayer());
         Collections.reverse(allCards);
         int totalCards = allCards.size();
 
@@ -136,6 +188,12 @@ public class GameHandler implements Serializable {
     }
 
 
+    /**
+     * Checks if the player has any playable card based on the current card on the table.
+     *
+     * @param player The player to check for playable cards.
+     * @return true if the player has at least one playable card, false otherwise.
+     */
     public boolean hasPlayableCard(Player player) {
         Card topCard = table.getCurrentCardOnTheTable();
         for (Card card : player.getCardsPlayer()) {
@@ -146,6 +204,13 @@ public class GameHandler implements Serializable {
         return false;
     }
 
+    /**
+     * Plays a card from the player's hand and updates the game state.
+     * The card is added to the table, removed from the player's hand, and the visual representation is updated.
+     *
+     * @param player The player who is playing the card.
+     * @param card The card to be played.
+     */
     public void playCard(Player player, Card card) {
         table.addCardOnTheTable(card);
         player.getCardsPlayer().remove(card);
@@ -153,6 +218,14 @@ public class GameHandler implements Serializable {
         GameSaver.save(this);
     }
 
+    /**
+     * Applies the effect of the played card and updates the game state.
+     * Handles special cards like +2, +4, wild cards, skip, and reverse.
+     * Updates the turn based on whether the card was played by a human or machine player.
+     *
+     * @param card The card that was played.
+     * @param playedByHuman Indicates if the card was played by the human player.
+     */
     public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {
         if (card.isPlusTwo()) {
             if (playedByHuman) {
@@ -176,7 +249,8 @@ public class GameHandler implements Serializable {
                 GamePauseManager.getInstance().pauseGame();
             }
 
-            // Color aleatorio por defecto
+            // Default choosse a random color for wild cards
+            // If played by human, use the color chooser to select a color
             String[] colors = {"RED", "GREEN", "BLUE", "YELLOW"};
             String newColor = colors[new Random().nextInt(colors.length)];
 
@@ -191,7 +265,7 @@ public class GameHandler implements Serializable {
         }
 
         if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {
-            // El jugador que juega se queda con el turno (reverse/skip/PlusSomething)
+            // If the card is a skip, reverse, +2, or +4, the turn remains with the same player
             isHumanTurn = playedByHuman;
         } else {
             isHumanTurn = !playedByHuman;
@@ -200,10 +274,23 @@ public class GameHandler implements Serializable {
         GameSaver.save(this);
     }
 
+    /**
+     * Sets the color chooser for selecting colors when playing wild cards.
+     *
+     * @param colorChooser The ColorChooser instance to set.
+     */
     public void setColorChooser(ColorChooser colorChooser) {
         this.colorChooser = colorChooser;
     }
 
+    /**
+     * Checks if there is a winner in the game.
+     * If the human player has no cards left, they win.
+     * If the machine player has no cards left, they win.
+     * Updates the game state accordingly and returns the winner.
+     *
+     * @return The type of the winner ("HUMAN" or "MACHINE"), or null if no winner yet.
+     */
     public String checkWinner() {
         if (humanPlayer.getCardsPlayer().isEmpty()) {
             gameEnded = true;
@@ -214,11 +301,17 @@ public class GameHandler implements Serializable {
             winner = "MACHINE";
             PlayerStatsManager.updateStats(false, 0, false);
         } else {
-            winner = null; // No hay ganador aún
+            winner = null; // No winner yet
         }
         return winner;
     }
 
+    /**
+     * Gets the last card played by the specified player.
+     *
+     * @param player The player whose last card is to be retrieved.
+     * @return The last card played by the player, or null if the player has no cards.
+     */
     public Card getLastCard(Player player) {
         List<Card> cards = player.getCardsPlayer();
         return cards.isEmpty() ? null : cards.get(cards.size() - 1);

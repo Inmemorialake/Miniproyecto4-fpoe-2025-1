@@ -1,17 +1,12 @@
 package org.example.eiscuno.controller;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+// Imports
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -28,6 +23,10 @@ import org.example.eiscuno.view.GameUnoStage;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Controller for the Uno game, handling the game logic and UI updates.
+ * This class manages the game state, player interactions, and visual updates.
+ */
 public class GameUnoController {
 
     @FXML
@@ -61,11 +60,15 @@ public class GameUnoController {
     private ThreadPlayMachine threadPlayMachine;
     private ThreadGameOver threadGameOver;
 
-    //Para que el gameHandler pueda hacer reset de las cartas con eatCard()
+    // Runnable to reset the card scroll position
     private final Runnable resetCardScroll = () -> {
         posInitCardToShow = 0;
     };
 
+    /**
+     * A map to convert color names from Spanish to English.
+     * This is used for the color selection dialog when a player needs to choose a color.
+     */
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
         COLOR_MAP.put("ROJO", "RED");
@@ -78,9 +81,14 @@ public class GameUnoController {
         COLOR_MAP.put("YELLOW", "YELLOW");
     }
 
+    /**
+     * Initializes the game controller.
+     * This method is called when the FXML file is loaded.
+     * It sets up the game handler, registers the controller, and initializes the UI.
+     */
     @FXML
     public void initialize() {
-        //Le pasamos este controller a la stage para que al cerrarse pueda usar nuestra funcion de cerrar
+        // Register the game controller with the GameUnoStage instance
         try {
             GameUnoStage.getInstance().registerGameController(this);
         } catch (IOException e) {
@@ -88,7 +96,7 @@ public class GameUnoController {
         }
 
         initVariables();
-        gameHandler.setColorChooser(this::showColorDialog); // Le pasamos al gameHandler la funcion para que el usuario pueda elegir un color
+        gameHandler.setColorChooser(this::showColorDialog); // Set the color chooser for the game handler
         updateVisuals();
         if (!gameHandler.getTable().getCards().isEmpty()) {
             tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
@@ -108,6 +116,11 @@ public class GameUnoController {
         borderPane.setBackground(new Background(bgImage));
     }
 
+    /**
+     * Starts the threads that handle the game logic.
+     * This method initializes and starts the threads responsible for handling UNO callouts,
+     * playing the machine's turn, and checking for game over conditions.
+     */
     public void startThreads() {
         threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));
         threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView);
@@ -129,7 +142,7 @@ public class GameUnoController {
         if (gameHandler != null) {
             gameHandler.setUpdateVisualCallback(this::updateVisuals);
             gameHandler.setResetCardScroll(resetCardScroll);
-            restoreCardVisuals(); //Cuando cargamos una partida, las visuales de las cartas se pierden por lo que tenemos que volver a ponerlas :3
+            restoreCardVisuals(); // Restore visuals of cards from the saved game
             System.out.println("Partida cargada correctamente.");
         } else {
             System.out.println("Fallo al cargar partida, se crea una nueva.");
@@ -137,10 +150,18 @@ public class GameUnoController {
         }
     }
 
+    /**
+     * Creates a new game instance.
+     * This method initializes a new GameHandler and sets the update visuals callback.
+     */
     private void createNewGame() {
         this.gameHandler = GameHandler.createNewGame(this::updateVisuals, resetCardScroll);
     }
 
+    /**
+     * Restores the visuals of the cards for both players and the table.
+     * This method is called when loading a saved game to ensure that all card visuals are correctly displayed.
+     */
     private void restoreCardVisuals() {
         gameHandler.getHumanPlayer().getCardsPlayer().forEach(Card::restoreVisuals);
         gameHandler.getMachinePlayer().getCardsPlayer().forEach(Card::restoreVisuals);
@@ -148,12 +169,20 @@ public class GameUnoController {
         gameHandler.getDeck().getAllCards().forEach(Card::restoreVisuals);
     }
 
+    /**
+     * Updates the visuals of the game, including player cards and the current color.
+     * This method is called to refresh the UI after any game state change.
+     */
     public void updateVisuals(){
         printHumanPlayerCards();
         printMachinePlayerCards();
         updateCurrentColorUI();
     }
 
+    /**
+     * Prints the human player's cards on the grid pane.
+     * This method retrieves the visible cards for the human player and displays them in the UI.
+     */
     public void printHumanPlayerCards() {
         gridPaneCardsPlayer.getChildren().clear();
         Card[] visibleCards = gameHandler.getCurrentVisibleCardsHumanPlayer(posInitCardToShow);
@@ -193,16 +222,27 @@ public class GameUnoController {
         }
     }
 
+    /**
+     * Updates the UI to reflect the current color of the card on the table.
+     * This method retrieves the color of the current card and updates the label accordingly.
+     */
     private void updateCurrentColorUI() {
         String color = gameHandler.getCurrentCardOnTable().getColor();
         labelCurrentColor.setText("Color actual: " + (color != null ? color : "-"));
     }
 
+    /**
+     * Attaches a click handler to the card image view.
+     * This method allows the player to click on a card to play it, and updates the table image view accordingly.
+     *
+     * @param card the card to attach the click handler to
+     * @param cardImageView the ImageView representing the card
+     */
     private void attachClickHandlerToCard(Card card, ImageView cardImageView) {
         cardImageView.setOnMouseClicked(event -> {
             boolean wasPlayed = gameHandler.handleHumanCardClick(card, () -> {
                 tableImageView.setImage(card.getImage());
-                updateVisuals(); // actualizar visualmente
+                updateVisuals(); // Update the visuals after playing the card
             });
 
             if (!wasPlayed) {
@@ -215,6 +255,12 @@ public class GameUnoController {
         });
     }
 
+    /**
+     * Shows a color selection dialog to the user.
+     * This method allows the user to choose a color when playing a wild card.
+     *
+     * @return the selected color as a string
+     */
     private String showColorDialog() {
         final String[] selectedColor = new String[1];
 
@@ -232,8 +278,12 @@ public class GameUnoController {
         return selectedColor[0] != null ? selectedColor[0] : "RED"; // fallback
     }
 
+    /**
+     * Shuts down the application gracefully.
+     * This method stops all running threads and exits the application.
+     */
     public void shutdownApplication() {
-        // Detener hilos que tengas vivos (ejemplo)
+        // Stop all threads gracefully
         if (threadPlayMachine != null) threadPlayMachine.stopThread();
         if (threadUnoCallout != null) threadUnoCallout.stopThread();
         if (threadGameOver != null) threadGameOver.stopThread();
@@ -242,6 +292,13 @@ public class GameUnoController {
         System.exit(0);
     }
 
+    /**
+     * Handles the action when the player clicks on the "Take Card" button.
+     * This method checks if it's the player's turn and if they have playable cards.
+     * If valid, it allows the player to take a card from the deck.
+     *
+     * @param event the mouse event triggered by clicking the button
+     */
     @FXML
     void onHandleTakeCard(MouseEvent event) {
         if (!gameHandler.getHumanTurn()) {
@@ -258,6 +315,13 @@ public class GameUnoController {
         gameHandler.passTurnToMachine();
     }
 
+    /**
+     * Handles the action when the player clicks on the "UNO" button.
+     * This method checks if the player has only one card left and has not declared UNO yet.
+     * If valid, it declares UNO or calls out the machine for not declaring UNO.
+     *
+     * @param event the mouse event triggered by clicking the button
+     */
     @FXML
     void onHandleUno(MouseEvent event) {
         if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1 && !gameHandler.getHumanSaidUno()) {
@@ -274,21 +338,39 @@ public class GameUnoController {
         }
     }
 
+    /**
+     * Handles the action when the player clicks on the "Exit" button.
+     * This method shuts down the application gracefully.
+     *
+     * @param event the mouse event triggered by clicking the button
+     */
     @FXML
     private void handleExit(MouseEvent event) {
         shutdownApplication();
     }
 
+    /**
+     * Shows an error dialog when it's not the player's turn.
+     * This method is called when the player tries to play a card or take a card when it's not their turn.
+     */
     private void showTurnError() {
         DialogManager.showInfoDialog("Turno incorrecto", "No es tu turno. Espera a que la máquina juegue.");
         GamePauseManager.getInstance().pauseGame();
     }
 
+    /**
+     * Shows an error dialog when the player tries to play an invalid move.
+     * This method is called when the player attempts to play a card that does not match the current card on the table.
+     */
     private void showInvalidMoveError() {
         DialogManager.showInfoDialog("Jugada inválida", "No puedes jugar esa carta. Debe coincidir en color, número o símbolo con la carta de la mesa.");
         GamePauseManager.getInstance().pauseGame();
     }
 
+    /**
+     * Shows an error dialog when the player tries to take a card while having playable cards.
+     * This method is called when the player attempts to take a card while they still have playable cards in hand.
+     */
     private void showInvalidTryToTakeCardError(){
         DialogManager.showInfoDialog("Intento inválido", "No puedes tomar una carta si tienes cartas jugables. Juega una carta primero.");
         GamePauseManager.getInstance().pauseGame();
