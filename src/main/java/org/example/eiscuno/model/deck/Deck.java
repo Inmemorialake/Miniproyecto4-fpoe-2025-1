@@ -49,7 +49,7 @@ public class Deck implements Serializable {
      */
     public Card takeCard() {
         if (deckOfCards.isEmpty()) {
-            throw new IllegalStateException("El mazo está vacío y no hay forma de reponerlo.");
+            throw new IllegalStateException("El mazo está vacío, pero tranquilos, se puede reponer, intenta de nuevo");
         }
         return deckOfCards.pop();
     }

@@ -125,7 +125,7 @@ public class GameUnoController {
             restoreCardVisuals(); //Cuando cargamos una partida, las visuales de las cartas se pierden por lo que tenemos que volver a ponerlas :3
             System.out.println("Partida cargada correctamente.");
         } else {
-            System.out.println("Fallo al cargar partida, se crea una nueva.");
+            System.out.println("No se encontró una partida guardada, creando una nueva.");
             createNewGame();
         }
     }
