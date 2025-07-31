@@ -36,6 +36,7 @@ public class GameHandler implements Serializable {
     /**
      * Constructs a GameHandler with the specified players, deck, table, and game state.
      *
+
      * @param human The human player.
      * @param machine The machine player.
      * @param deck The deck of cards.
@@ -102,7 +103,6 @@ public class GameHandler implements Serializable {
     /**
      * Eats a specified number of cards from the deck and adds them to the player's hand.
      * If the deck is empty, it refills the deck with cards in use before taking cards.
-     *
      * @param player The player who will receive the cards.
      * @param numberOfCards The number of cards to take from the deck.
      */
@@ -141,7 +141,7 @@ public class GameHandler implements Serializable {
      */
     public boolean handleHumanCardClick(Card card, Runnable onFinish) {
         if (!isHumanTurn) {
-            return false;
+            return false
         }
 
         if (!card.canBePlayedOn(getCurrentCardOnTable())) {
@@ -172,7 +172,7 @@ public class GameHandler implements Serializable {
      * The cards are reversed to show the most recent cards first.
      *
      * @param posInitCardToShow The starting position of the card to show.
-     * @return An array of visible cards for the human player.
+     * @return An array of visible cards for the human player
      */
     public Card[] getCurrentVisibleCardsHumanPlayer(int posInitCardToShow) {
         List<Card> allCards = new ArrayList<>(humanPlayer.getCardsPlayer());
@@ -186,7 +186,6 @@ public class GameHandler implements Serializable {
         }
         return cards;
     }
-
 
     /**
      * Checks if the player has any playable card based on the current card on the table.
@@ -265,6 +264,7 @@ public class GameHandler implements Serializable {
         }
 
         if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {
+
             // If the card is a skip, reverse, +2, or +4, the turn remains with the same player
             isHumanTurn = playedByHuman;
         } else {
@@ -275,8 +275,7 @@ public class GameHandler implements Serializable {
     }
 
     /**
-     * Sets the color chooser for selecting colors when playing wild cards.
-     *
+     * Sets the color chooser for selecting colors when playing wild cards
      * @param colorChooser The ColorChooser instance to set.
      */
     public void setColorChooser(ColorChooser colorChooser) {

@@ -8,8 +8,9 @@ import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 
 /**
- * ThreadPlayMachine is a thread that handles the machine's turn in the game.
- * It checks if the machine can play a card or needs to draw one, and updates the game state accordingly.
+ * ThreadPlayMachine is a thread that handles the machine's turn in the game
+ * It checks if it's the machine's turn, plays a card if possible, or draws a card if not.
+ * The thread runs until the game ends or it is stopped.
  */
 public class ThreadPlayMachine extends Thread {
     private final GameHandler gameHandler;
@@ -18,7 +19,6 @@ public class ThreadPlayMachine extends Thread {
 
     /**
      * Constructor for ThreadPlayMachine.
-     *
      * @param gameHandler The GameHandler instance that manages the game state.
      * @param tableImageView The ImageView representing the table where cards are played.
      */
@@ -66,7 +66,6 @@ public class ThreadPlayMachine extends Thread {
             });
 
         } else {
-            // No playable card, draw a card
             gameHandler.eatCard(gameHandler.getMachinePlayer(), 1);
 
             Card drawn = gameHandler.getLastCard(gameHandler.getMachinePlayer());
@@ -84,7 +83,6 @@ public class ThreadPlayMachine extends Thread {
 
     /**
      * Finds a playable card from the machine's hand that can be played on the top card.
-     *
      * @param topCard The card currently on top of the table.
      * @return A playable card if found, otherwise null.
      */
@@ -100,7 +98,6 @@ public class ThreadPlayMachine extends Thread {
     /**
      * Safely sleeps the thread for a specified number of milliseconds.
      * If interrupted, it catches the exception and does nothing.
-     *
      * @param millis The number of milliseconds to sleep.
      */
     private void sleepSafely(long millis) {
