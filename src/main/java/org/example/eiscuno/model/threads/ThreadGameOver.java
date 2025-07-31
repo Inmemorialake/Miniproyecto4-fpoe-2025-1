@@ -13,20 +13,30 @@ import java.io.File;
 public class ThreadGameOver extends Thread {
 
     private final GameHandler gameHandler;
+    private volatile boolean running = true;
 
     public ThreadGameOver(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
     }
 
+    public void stopThread() {
+        running = false;
+        this.interrupt(); // por si está en sleep
+    }
+
     @Override
     public void run() {
-        while (!gameHandler.isGameEnded()) {
+        while (running && !gameHandler.isGameEnded()) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
+            } catch (InterruptedException e) {
+                // Si interrumpido, revisamos si debemos seguir
+                if (!running) return;
+                Thread.currentThread().interrupt(); // restauramos estado
             }
         }
+
+        if (!running) return; // Salimos si nos pidieron detener el hilo
 
         // Mensajes según resultado
         String title, message;
@@ -35,13 +45,13 @@ public class ThreadGameOver extends Thread {
             case "HUMAN":
                 title = "¡Has ganado!";
                 message = "¡Felicidades! Has ganado el juego.";
-                PlayerStatsManager.updateStats(true,0,false);
+                PlayerStatsManager.updateStats(true, 0, false);
                 System.out.println("El jugador humano ha ganado el juego.");
                 break;
             case "MACHINE":
                 title = "Has perdido";
                 message = "Ha ganado la IA. Suerte la próxima vez.";
-                PlayerStatsManager.updateStats(false,0,false);
+                PlayerStatsManager.updateStats(false, 0, false);
                 System.out.println("La IA ha ganado el juego.");
                 break;
             default:
@@ -51,7 +61,6 @@ public class ThreadGameOver extends Thread {
                 break;
         }
 
-        // Mostrar diálogo en hilo JavaFX
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(title);
@@ -59,15 +68,14 @@ public class ThreadGameOver extends Thread {
             alert.setContentText(message);
 
             alert.setOnHidden(e -> {
-                // 🔄 Al cerrar el diálogo
                 GameSaver.deleteSaveFile();
-
                 System.out.println("Saliendo de la aplicación...");
                 System.exit(0);
             });
 
             alert.show();
         });
+
         GamePauseManager.getInstance().pauseGame();
     }
 }

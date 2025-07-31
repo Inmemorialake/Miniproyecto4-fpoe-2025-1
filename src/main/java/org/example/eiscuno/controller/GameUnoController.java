@@ -15,14 +15,12 @@ import org.example.eiscuno.model.threads.ThreadGameOver;
 import org.example.eiscuno.view.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
-import org.example.eiscuno.model.common.PlayerStatsManager;
 import org.example.eiscuno.model.threads.ThreadPlayMachine;
 import org.example.eiscuno.model.threads.ThreadUnoCallout;
+import org.example.eiscuno.view.GameUnoStage;
 
-import java.io.*;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 public class GameUnoController {
 
@@ -47,7 +45,7 @@ public class GameUnoController {
 
     private ThreadUnoCallout threadUnoCallout;
     private ThreadPlayMachine threadPlayMachine;
-    private ThreadGameOver treadGameOver;
+    private ThreadGameOver threadGameOver;
 
     private final Object turnLock = new Object();
     private boolean repeatTurn = false;
@@ -66,6 +64,13 @@ public class GameUnoController {
 
     @FXML
     public void initialize() {
+        //Le pasamos este controller a la stage para que al cerrarse pueda usar nuestra funcion de cerrar
+        try {
+            GameUnoStage.getInstance().registerGameController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         initVariables();
         gameHandler.setColorChooser(this::showColorDialog); // Le pasamos al gameHandler la funcion para que el usuario pueda elegir un color
         updateVisuals();
@@ -78,8 +83,8 @@ public class GameUnoController {
     public void startThreads() {
         threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));
         threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView);
-        treadGameOver = new ThreadGameOver(gameHandler);
-        Thread u = new Thread(treadGameOver, "ThreadGameOver");
+        threadGameOver = new ThreadGameOver(gameHandler);
+        Thread u = new Thread(threadGameOver, "ThreadGameOver");
         u.start();
         Thread t = new Thread(threadUnoCallout, "ThreadSingUNO");
         t.start();
@@ -178,6 +183,16 @@ public class GameUnoController {
         return selectedColor[0] != null ? selectedColor[0] : "RED"; // fallback
     }
 
+    public void shutdownApplication() {
+        // Detener hilos que tengas vivos (ejemplo)
+        if (threadPlayMachine != null) threadPlayMachine.stopThread();
+        if (threadUnoCallout != null) threadUnoCallout.stopThread();
+        if (threadGameOver != null) threadGameOver.stopThread();
+
+        Platform.exit();
+        System.exit(0);
+    }
+
     @FXML
     void onHandleTakeCard(ActionEvent event) {
         if (!gameHandler.getHumanTurn()) {
@@ -207,6 +222,11 @@ public class GameUnoController {
             GamePauseManager.getInstance().pauseGame();
             return;
         }
+    }
+
+    @FXML
+    private void handleExit() {
+        shutdownApplication();
     }
 
     private void showTurnError() {

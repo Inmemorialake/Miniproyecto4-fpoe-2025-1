@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.eiscuno.controller.GameUnoController;
 
 import java.io.IOException;
 
@@ -12,6 +13,12 @@ import java.io.IOException;
  * This stage displays the game interface to the user.
  */
 public class GameUnoStage extends Stage {
+
+    private GameUnoController controller;
+
+    public void registerGameController(GameUnoController controller) {
+        this.controller = controller;
+    }
 
     /**
      * Constructs a new instance of GameUnoStage.
@@ -34,6 +41,13 @@ public class GameUnoStage extends Stage {
         setTitle("EISC Uno"); // Sets the title of the stage
         setScene(scene); // Sets the scene for the stage
         setResizable(false); // Disallows resizing of the stage
+
+        this.setOnCloseRequest(event -> {
+            if (controller != null) {
+                controller.shutdownApplication();
+            }
+        });
+
         show(); // Displays the stage
         System.out.println("La mamasita se muestra");
     }
