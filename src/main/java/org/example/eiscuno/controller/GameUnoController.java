@@ -1,11 +1,17 @@
 package org.example.eiscuno.controller;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.util.Duration;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -37,18 +43,23 @@ public class GameUnoController {
     private Label labelCurrentColor;
 
     @FXML
-    private Button unoButton;
+    private ImageView unoButton;
+
+    @FXML
+    private BorderPane borderPane;
+
+    private boolean humanSaidUno = false;
+    private boolean iaSaidUnoAuxiliar = false;
+    private int posInitCardToShow;
+    private boolean isHumanTurn;
+    private final Object turnLock = new Object();
+    private boolean repeatTurn = false;
 
     private GameHandler gameHandler;
-
-    private int posInitCardToShow = 0;
 
     private ThreadUnoCallout threadUnoCallout;
     private ThreadPlayMachine threadPlayMachine;
     private ThreadGameOver threadGameOver;
-
-    private final Object turnLock = new Object();
-    private boolean repeatTurn = false;
 
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
@@ -78,6 +89,18 @@ public class GameUnoController {
             tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
         }
         startThreads();
+
+        //Background
+        Image backgroundImage = new Image(getClass().getResource("/org/example/eiscuno/images/fondo.png").toExternalForm());
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, false, true);
+        BackgroundImage bgImage = new BackgroundImage(
+                backgroundImage,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                backgroundSize
+        );
+        borderPane.setBackground(new Background(bgImage));
     }
 
     public void startThreads() {
@@ -92,6 +115,9 @@ public class GameUnoController {
         s.start();
     }
 
+    /**
+     * Initializes the variables for the game.
+     */
     private void initVariables() {
         this.gameHandler = GameSaver.load();
 
@@ -99,7 +125,7 @@ public class GameUnoController {
             restoreCardVisuals(); //Cuando cargamos una partida, las visuales de las cartas se pierden por lo que tenemos que volver a ponerlas :3
             System.out.println("Partida cargada correctamente.");
         } else {
-            System.out.println("Fallo al cargar partida, se crea una nueva.");
+            System.out.println("No se encontró una partida guardada, creando una nueva.");
             createNewGame();
         }
     }
@@ -126,21 +152,37 @@ public class GameUnoController {
         Card[] visibleCards = gameHandler.getCurrentVisibleCardsHumanPlayer(posInitCardToShow);
 
         for (int i = 0; i < visibleCards.length; i++) {
-            Card card = visibleCards[i];
+            final Card card = visibleCards[i];
             ImageView cardImageView = card.getCard();
             attachClickHandlerToCard(card, cardImageView); // Mover comportamiento a una función aparte
-            gridPaneCardsPlayer.add(cardImageView, i, 0);
+            cardImageView.setTranslateX(i * 90);
+            this.gridPaneCardsPlayer.add(cardImageView, 0, 0);
         }
     }
 
-    public void printMachinePlayerCards() {
-        gridPaneCardsMachine.getChildren().clear();
+    /**
+     * Prints the machine player's cards on the grid pane.
+     */
+    private void printMachinePlayerCards() {
+        this.gridPaneCardsMachine.getChildren().clear();
         int numCards = gameHandler.getMachinePlayer().getCardsPlayer().size();
-        for (int i = 0; i < numCards; i++) {
-            ImageView cardBack = new ImageView(new Image(getClass().getResource("/org/example/eiscuno/cards-uno/card_uno.png").toExternalForm()));
-            cardBack.setFitHeight(90);
-            cardBack.setFitWidth(70);
-            gridPaneCardsMachine.add(cardBack, i, 0);
+        if(numCards <= 8) {
+            for (int i = 0; i < numCards; i++) {
+                ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cardReverse-removebg-preview.png").toExternalForm()));
+                cardBack.setFitHeight(170);
+                cardBack.setFitWidth(110);
+                cardBack.setTranslateX(i * 75);
+                this.gridPaneCardsMachine.add(cardBack, 0, 0);
+            }
+
+        } else {
+            for (int i = 0; i < 8; i++) {
+                ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cardReverse-removebg-preview.png").toExternalForm()));
+                cardBack.setFitHeight(170);
+                cardBack.setFitWidth(110);
+                cardBack.setTranslateX(i * 75);
+                this.gridPaneCardsMachine.add(cardBack, 0, 0);
+            }
         }
     }
 
@@ -194,7 +236,7 @@ public class GameUnoController {
     }
 
     @FXML
-    void onHandleTakeCard(ActionEvent event) {
+    void onHandleTakeCard(MouseEvent event) {
         if (!gameHandler.getHumanTurn()) {
             showTurnError();
             return;
@@ -209,7 +251,7 @@ public class GameUnoController {
     }
 
     @FXML
-    void onHandleUno(ActionEvent event) {
+    void onHandleUno(MouseEvent event) {
         if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1 && !gameHandler.getHumanSaidUno()) {
             gameHandler.setHumanSaidUno(true);
             DialogManager.showInfoDialog("UNO declarado", "¡Has declarado UNO correctamente!");
@@ -225,7 +267,7 @@ public class GameUnoController {
     }
 
     @FXML
-    private void handleExit() {
+    private void handleExit(MouseEvent event) {
         shutdownApplication();
     }
 
@@ -250,7 +292,7 @@ public class GameUnoController {
      * @param event the action event
      */
     @FXML
-    void onHandleBack(ActionEvent event) {
+    void onHandleBack(MouseEvent event) {
         if (this.posInitCardToShow > 0) {
             this.posInitCardToShow--;
             printHumanPlayerCards();
@@ -263,7 +305,7 @@ public class GameUnoController {
      * @param event the action event
      */
     @FXML
-    void onHandleNext(ActionEvent event) {
+    void onHandleNext(MouseEvent event) {
         if (this.posInitCardToShow < gameHandler.getHumanPlayer().getCardsPlayer().size() - 4) {
             this.posInitCardToShow++;
             printHumanPlayerCards();
