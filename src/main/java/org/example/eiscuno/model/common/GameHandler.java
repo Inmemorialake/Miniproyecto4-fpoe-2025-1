@@ -153,13 +153,13 @@ public class GameHandler implements Serializable {
             GamePauseManager.getInstance().pauseGame();
 
         } else if (card.isPlusFour() || card.isWildCard()) {
-            if(playedByHuman) {
-                machinePlayer.addCards(deck.takeCards(4));
-            } else {
-                humanPlayer.addCards(deck.takeCards(4));
-            }
-
             if(card.isPlusFour()) {
+                if (playedByHuman) {
+                    machinePlayer.addCards(deck.takeCards(4));
+                } else {
+                    humanPlayer.addCards(deck.takeCards(4));
+                }
+
                 DialogManager.showInfoDialog("+4 Jugado", "Se repite el turno!");
                 GamePauseManager.getInstance().pauseGame();
             }

@@ -43,22 +43,13 @@ public class GameUnoController {
     private Label labelCurrentColor;
 
     @FXML
-    private Button unoButton;
+    private ImageView unoButton;
 
     @FXML
     private BorderPane borderPane;
 
-    @FXML
-    private ImageView unoImageView;
-
     private boolean humanSaidUno = false;
     private boolean iaSaidUnoAuxiliar = false;
-
-    private Player humanPlayer;
-    private Player machinePlayer;
-    private Deck deck;
-    private Table table;
-    private GameUno gameUno;
     private int posInitCardToShow;
     private boolean isHumanTurn;
     private final Object turnLock = new Object();
@@ -66,14 +57,9 @@ public class GameUnoController {
 
     private GameHandler gameHandler;
 
-    private int posInitCardToShow = 0;
-
     private ThreadUnoCallout threadUnoCallout;
     private ThreadPlayMachine threadPlayMachine;
     private ThreadGameOver threadGameOver;
-
-    private final Object turnLock = new Object();
-    private boolean repeatTurn = false;
 
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
@@ -167,7 +153,6 @@ public class GameUnoController {
 
         for (int i = 0; i < visibleCards.length; i++) {
             final Card card = visibleCards[i];
-            final int index = i;
             ImageView cardImageView = card.getCard();
             attachClickHandlerToCard(card, cardImageView); // Mover comportamiento a una función aparte
             cardImageView.setTranslateX(i * 90);
@@ -180,7 +165,7 @@ public class GameUnoController {
      */
     private void printMachinePlayerCards() {
         this.gridPaneCardsMachine.getChildren().clear();
-        int numCards = machinePlayer.getCardsPlayer().size();
+        int numCards = gameHandler.getMachinePlayer().getCardsPlayer().size();
         if(numCards <= 8) {
             for (int i = 0; i < numCards; i++) {
                 ImageView cardBack = new ImageView(new javafx.scene.image.Image(getClass().getResource("/org/example/eiscuno/cardReverse-removebg-preview.png").toExternalForm()));
@@ -251,7 +236,7 @@ public class GameUnoController {
     }
 
     @FXML
-    void onHandleTakeCard(ActionEvent event) {
+    void onHandleTakeCard(MouseEvent event) {
         if (!gameHandler.getHumanTurn()) {
             showTurnError();
             return;
@@ -266,7 +251,7 @@ public class GameUnoController {
     }
 
     @FXML
-    void onHandleUno(ActionEvent event) {
+    void onHandleUno(MouseEvent event) {
         if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1 && !gameHandler.getHumanSaidUno()) {
             gameHandler.setHumanSaidUno(true);
             DialogManager.showInfoDialog("UNO declarado", "¡Has declarado UNO correctamente!");
@@ -282,7 +267,7 @@ public class GameUnoController {
     }
 
     @FXML
-    private void handleExit() {
+    private void handleExit(MouseEvent event) {
         shutdownApplication();
     }
 
@@ -321,7 +306,7 @@ public class GameUnoController {
      */
     @FXML
     void onHandleNext(MouseEvent event) {
-        if (this.posInitCardToShow < this.humanPlayer.getCardsPlayer().size() - 4) {
+        if (this.posInitCardToShow < gameHandler.getHumanPlayer().getCardsPlayer().size() - 4) {
             this.posInitCardToShow++;
             printHumanPlayerCards();
         }
