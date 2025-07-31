@@ -42,9 +42,12 @@ public class HomeUnoController {
                 String data = reader.readLine();
                 if (data != null) {
                     String[] parts = data.split(",");
-                    cardsLabel.setText("Cartas puestas: " + parts[2]);
-                    gamesPlayedLabel.setText("Partidas jugadas: " + parts[0]);
-                    gamesWonLabel.setText("Partidas ganadas: " + parts[1]);
+                    cardsLabel.setText(parts[2]);
+                    cardsLabel.setStyle("-fx-font-weight: bold;");
+                    gamesPlayedLabel.setText(parts[0]);
+                    gamesPlayedLabel.setStyle("-fx-font-weight: bold;");
+                    gamesWonLabel.setText( parts[1]);
+                    gamesWonLabel.setStyle("-fx-font-weight: bold;");
                     // Podrías añadir también las cartas colocadas si quieres mostrar eso
                 }
             } catch (IOException e) {
@@ -79,7 +82,7 @@ public class HomeUnoController {
 
         if (result.isPresent()) {
             if (result.get() == continuarBtn) {
-                launchGameScene(); // Launch the game scene to continue the saved game
+                launchGameScene(); // simplemente lanza la escena, el controlador cargará el estado
             } else if (result.get() == nuevaBtn) {
                 // Eliminar archivo guardado y lanzar escena
                 if (saveFile.delete()) {
@@ -104,14 +107,8 @@ public class HomeUnoController {
 
             Stage currentStage = (Stage) unoLogo.getScene().getWindow();
             currentStage.setScene(newScene);
-            currentStage.show(); // Asegúrate de mostrar la nueva escena
         } catch (IOException e) {
             e.printStackTrace();
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setTitle("Error al cargar la escena");
-            errorAlert.setHeaderText("No se pudo cargar la escena del juego.");
-            errorAlert.setContentText("Por favor, verifica el archivo FXML y vuelve a intentarlo.");
-            errorAlert.showAndWait();
         }
     }
 }

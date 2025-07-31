@@ -37,8 +37,8 @@ public class Card implements Serializable {
     private ImageView createCardImageView() {
         ImageView card = new ImageView(this.image);
         card.setY(16);
-        card.setFitHeight(90);
-        card.setFitWidth(70);
+        card.setFitHeight(170);
+        card.setFitWidth(110);
         return card;
     }
 
