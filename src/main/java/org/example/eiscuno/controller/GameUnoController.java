@@ -61,6 +61,11 @@ public class GameUnoController {
     private ThreadPlayMachine threadPlayMachine;
     private ThreadGameOver threadGameOver;
 
+    //Para que el gameHandler pueda hacer reset de las cartas con eatCard()
+    private final Runnable resetCardScroll = () -> {
+        posInitCardToShow = 0;
+    };
+
     private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();
     static {
         COLOR_MAP.put("ROJO", "RED");
@@ -122,6 +127,8 @@ public class GameUnoController {
         this.gameHandler = GameSaver.load();
 
         if (gameHandler != null) {
+            gameHandler.setUpdateVisualCallback(this::updateVisuals);
+            gameHandler.setResetCardScroll(resetCardScroll);
             restoreCardVisuals(); //Cuando cargamos una partida, las visuales de las cartas se pierden por lo que tenemos que volver a ponerlas :3
             System.out.println("Partida cargada correctamente.");
         } else {
@@ -131,7 +138,7 @@ public class GameUnoController {
     }
 
     private void createNewGame() {
-        this.gameHandler = GameHandler.createNewGame(this::updateVisuals);
+        this.gameHandler = GameHandler.createNewGame(this::updateVisuals, resetCardScroll);
     }
 
     private void restoreCardVisuals() {
@@ -154,9 +161,9 @@ public class GameUnoController {
         for (int i = 0; i < visibleCards.length; i++) {
             final Card card = visibleCards[i];
             ImageView cardImageView = card.getCard();
-            attachClickHandlerToCard(card, cardImageView); // Mover comportamiento a una función aparte
+            attachClickHandlerToCard(card, cardImageView);
             cardImageView.setTranslateX(i * 90);
-            this.gridPaneCardsPlayer.add(cardImageView, 0, 0);
+            gridPaneCardsPlayer.add(cardImageView, 0, 0);
         }
     }
 
@@ -246,6 +253,7 @@ public class GameUnoController {
             return;
         }
         gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);
+        posInitCardToShow = 0;
         printHumanPlayerCards();
         gameHandler.passTurnToMachine();
     }

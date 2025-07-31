@@ -8,7 +8,14 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/eiscuno/game-uno-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/eiscuno/game-uno-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/GameUnoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/GameUnoController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/game-uno-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/game-uno-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" afterDir="false" />
     </list>
     <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -217,7 +224,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753933143776</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="El merge mas brutal de Tokio-3 (Peor que el plan de complementacion humana)&#10;Se han arreglado algunos problemas que sucedieron con el merge, y tambien el comportamiento del wild como +4 ha quedado eliminado por su exagerado nivel de poder y desbalanceo del meta actual. Lo siento chicos :c">
+      <option name="closed" value="true" />
+      <created>1753938717774</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1753938717774</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

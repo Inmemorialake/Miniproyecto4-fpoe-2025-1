@@ -19,6 +19,7 @@ public class GameHandler implements Serializable {
     private final Deck deck;
     private final Table table;
     private transient Runnable updateVisualCallback;
+    private transient Runnable resetCardScroll;
 
     private boolean iaSaidUno;
     private boolean isHumanTurn;
@@ -29,12 +30,13 @@ public class GameHandler implements Serializable {
 
     private transient ColorChooser colorChooser;
 
-    public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno, Runnable updateVisualCallback) {
+    public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno, Runnable updateVisualCallback, Runnable resetCardScroll) {
         this.humanPlayer = human;
         this.machinePlayer = machine;
         this.deck = deck;
         this.table = table;
         this.updateVisualCallback = updateVisualCallback;
+        this.resetCardScroll = resetCardScroll;
         this.iaSaidUno = iaSaidUno;
         this.isHumanTurn = isHumanTurn;
         this.humanSaidUno = humanSaidUno;
@@ -42,12 +44,12 @@ public class GameHandler implements Serializable {
         this.winner = null;
     }
 
-    public static GameHandler createNewGame(Runnable updateVisualCallback) {
+    public static GameHandler createNewGame(Runnable updateVisualCallback, Runnable resetCardScroll) {
         Player human = new Player("HUMAN_PLAYER");
         Player machine = new Player("MACHINE_PLAYER");
         Deck deck = new Deck();
         Table table = new Table();
-        GameHandler handler = new GameHandler(human, machine, deck, table, false, true, false, updateVisualCallback);
+        GameHandler handler = new GameHandler(human, machine, deck, table, false, true, false, updateVisualCallback, resetCardScroll);
         handler.startGame();
         return handler;
     }
@@ -73,14 +75,20 @@ public class GameHandler implements Serializable {
         for (int i = 0; i < numberOfCards; i++) {
             try {
                 player.addCard(deck.takeCard());
-                Platform.runLater(updateVisualCallback);
+                Platform.runLater(() -> {
+                    if(resetCardScroll != null) resetCardScroll.run();
+                    updateVisualCallback.run();
+                });
                 GameSaver.save(this);
             } catch (IllegalStateException e) {
                 // Si el mazo está vacío, lo rellenamos con las cartas en uso
                 List<Card> inUse = new ArrayList<>();
                 deck.refillDeck(inUse);
                 player.addCard(deck.takeCard());
-                Platform.runLater(updateVisualCallback);
+                Platform.runLater(() -> {
+                    if(resetCardScroll != null) resetCardScroll.run();
+                    updateVisualCallback.run();
+                });
                 GameSaver.save(this);
             }
         }
@@ -115,14 +123,18 @@ public class GameHandler implements Serializable {
     }
 
     public Card[] getCurrentVisibleCardsHumanPlayer(int posInitCardToShow) {
-        int totalCards = humanPlayer.getCardsPlayer().size();
+        List<Card> allCards = new ArrayList<>(humanPlayer.getCardsPlayer()); // <-- Copia
+        Collections.reverse(allCards);
+        int totalCards = allCards.size();
+
         int numVisibleCards = Math.min(4, totalCards - posInitCardToShow);
         Card[] cards = new Card[numVisibleCards];
         for (int i = 0; i < numVisibleCards; i++) {
-            cards[i] = humanPlayer.getCard(posInitCardToShow + i);
+            cards[i] = allCards.get(posInitCardToShow + i);
         }
         return cards;
     }
+
 
     public boolean hasPlayableCard(Player player) {
         Card topCard = table.getCurrentCardOnTheTable();
@@ -250,6 +262,14 @@ public class GameHandler implements Serializable {
 
     public boolean getHumanTurn() {
         return isHumanTurn;
+    }
+
+    public void setUpdateVisualCallback(Runnable updateVisualCallback) {
+        this.updateVisualCallback = updateVisualCallback;
+    }
+
+    public void setResetCardScroll(Runnable resetCardScroll) {
+        this.resetCardScroll = resetCardScroll;
     }
 
     public void passTurnToHuman() {

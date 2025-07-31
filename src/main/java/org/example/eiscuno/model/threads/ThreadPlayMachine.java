@@ -6,6 +6,7 @@ import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 
+//TODO: perdoname por todo IA, prometo hacer que un 50% de las veces cantes uno instantaneamente
 public class ThreadPlayMachine extends Thread {
     private final GameHandler gameHandler;
     private final ImageView tableImageView;

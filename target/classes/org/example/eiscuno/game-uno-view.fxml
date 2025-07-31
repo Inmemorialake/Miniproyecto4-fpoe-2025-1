@@ -20,7 +20,7 @@
          <children>
             <ImageView fitHeight="259.0" fitWidth="286.0" layoutX="14.0" layoutY="142.0" onMouseClicked="#onHandleTakeCard" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@d1281df3-23bd-407d-8f93-77863dffb69d-removebg-preview%20(1).png" />
+                  <Image url="@d1281df3-23bd-407d-8f93-77863dffb69d-removebg-preview (1).png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -32,7 +32,7 @@
    <right>
       <VBox alignment="CENTER" prefHeight="499.0" prefWidth="222.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="unoImageView" fitHeight="135.0" fitWidth="210.0" onMouseClicked="#onHandleUno" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="unoButton" fitHeight="135.0" fitWidth="210.0" onMouseClicked="#onHandleUno" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/button_uno.png" />
                </image>
@@ -78,7 +78,7 @@
                   <Insets right="240.0" />
                </HBox.margin>
             </GridPane>
-            <ImageView fitHeight="59.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="59.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#handleExit">
                <image>
                   <Image url="@icons/x-removebg-preview.png" />
                </image>
