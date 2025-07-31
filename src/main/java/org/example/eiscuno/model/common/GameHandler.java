@@ -141,7 +141,7 @@ public class GameHandler implements Serializable {
      */
     public boolean handleHumanCardClick(Card card, Runnable onFinish) {
         if (!isHumanTurn) {
-            return false
+            return false;
         }
 
         if (!card.canBePlayedOn(getCurrentCardOnTable())) {

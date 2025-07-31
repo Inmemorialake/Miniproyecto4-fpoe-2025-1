@@ -1,0 +1,165 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec\" name=\"Changes\" comment=\"\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/Main.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/Main.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/ClickToContinueController.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/ClickToContinueController.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/HomeUnoController.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/HomeUnoController.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/StartController.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/StartController.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/common/PlayerStatsManager.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/common/PlayerStatsManager.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/table/Table.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/model/table/Table.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage$ClickToContinueHodler.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage$ClickToContinueHodler.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage$StartHolder.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage$StartHolder.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage.class\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"JavaFXApplication\" />\n        <option value=\"Enum\" />\n        <option value=\"CSS File\" />\n        <option value=\"Interface\" />\n        <option value=\"Class\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;fabiansvc&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/fabiansvc/eisc-uno.git&quot;,\n    &quot;accountId&quot;: &quot;0c82e6b4-a45c-4190-a110-02ef4a3ff1b6&quot;\n  }\n}</component>\n  <component name=\"MavenImportPreferences\">\n    <option name=\"generalSettings\">\n      <MavenGeneralSettings>\n        <option name=\"mavenHomeTypeForPersistence\" value=\"WRAPPER\" />\n      </MavenGeneralSettings>\n    </option>\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 4\n}</component>\n  <component name=\"ProjectId\" id=\"2h51MgXC3VsYGUopaGajj22IER5\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,\n    &quot;Application.HelloApplication.executor&quot;: &quot;Run&quot;,\n    &quot;Application.Main.executor&quot;: &quot;Run&quot;,\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;master&quot;,\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabian/Documents/eisc-uno&quot;,\n    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"C:\\Users\\fsvc1\\Coding\\eisc-uno\\src\\main\\resources\\org\\example\\eiscuno\" />\n      <recent name=\"C:\\Users\\fsvc1\\Coding\\eisc-uno\\src\\main\\resources\\org\\example\\eiscuno\\images\" />\n      <recent name=\"C:\\Users\\fsvc1\\Coding\\eisc-uno\\src\" />\n    </key>\n  </component>\n  <component name=\"RunManager\">\n    <configuration name=\"Main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"org.example.eiscuno.Main\" />\n      <module name=\"eisc-uno\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"org.example.eiscuno.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Application.Main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"jdk-17.0.10-corretto-17.0.10-4caba194b151-5cd809f4\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec\" name=\"Changes\" comment=\"\" />\n      <created>1716869079895</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1716869079895</updated>\n      <workItem from=\"1716869081101\" duration=\"1989000\" />\n      <workItem from=\"1716937216117\" duration=\"1202000\" />\n      <workItem from=\"1716949345992\" duration=\"5490000\" />\n      <workItem from=\"1717004194707\" duration=\"3656000\" />\n      <workItem from=\"1717077374234\" duration=\"23000\" />\n      <workItem from=\"1717100685009\" duration=\"1547000\" />\n      <workItem from=\"1717179969295\" duration=\"1262000\" />\n      <workItem from=\"1717188401940\" duration=\"5723000\" />\n      <workItem from=\"1717248020885\" duration=\"2071000\" />\n      <workItem from=\"1717294616252\" duration=\"3767000\" />\n      <workItem from=\"1717380082805\" duration=\"84000\" />\n      <workItem from=\"1717445468019\" duration=\"129000\" />\n      <workItem from=\"1717445697650\" duration=\"964000\" />\n      <workItem from=\"1717456780718\" duration=\"9929000\" />\n      <workItem from=\"1717624873426\" duration=\"617000\" />\n      <workItem from=\"1717648324316\" duration=\"1349000\" />\n      <workItem from=\"1717701834429\" duration=\"18000\" />\n      <workItem from=\"1717704199858\" duration=\"6785000\" />\n      <workItem from=\"1717852871006\" duration=\"31000\" />\n      <workItem from=\"1717853787588\" duration=\"7091000\" />\n      <workItem from=\"1732204398035\" duration=\"285000\" />\n      <workItem from=\"1732739883028\" duration=\"1056000\" />\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision f5af9d45d8118ab148d623a6daebdc978a6cb63a)
++++ b/.idea/workspace.xml	(date 1753991218683)
+@@ -1,29 +1,14 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AnalysisUIOptions">
++    <option name="SCOPE_TYPE" value="3" />
++  </component>
+   <component name="AutoImportSettings">
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/Main.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/ClickToContinueController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/ClickToContinueController.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/HomeUnoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/HomeUnoController.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/StartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/StartController.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/common/PlayerStatsManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/common/PlayerStatsManager.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/table/Table.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/table/Table.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage$ClickToContinueHodler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage$ClickToContinueHodler.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage$StartHolder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage$StartHolder.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage.class" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -71,36 +56,42 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+-    &quot;Application.HelloApplication.executor&quot;: &quot;Run&quot;,
+-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Fabian/Documents/eisc-uno&quot;,
+-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "ASKED_ADD_EXTERNAL_FILES": "true",
++    "Application.HelloApplication.executor": "Run",
++    "Application.Main.executor": "Run",
++    "JUnit.CardTest.executor": "Run",
++    "JUnit.DeckTest.executor": "Run",
++    "JUnit.GameHandlerTest.executor": "Run",
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "git-widget-placeholder": "master",
++    "ignore.virus.scanning.warn.message": "true",
++    "kotlin-language-version-configured": "true",
++    "last_opened_file_path": "/home/inmemorialake/Miniproyecto4-fpoe-2025-1",
++    "list.type.of.created.stylesheet": "CSS",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "settings.editor.selected.configurable": "preferences.lookFeel",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
++    <key name="CopyFile.RECENT_KEYS">
++      <recent name="$PROJECT_DIR$" />
++    </key>
+     <key name="MoveFile.RECENT_KEYS">
+       <recent name="C:\Users\fsvc1\Coding\eisc-uno\src\main\resources\org\example\eiscuno" />
+       <recent name="C:\Users\fsvc1\Coding\eisc-uno\src\main\resources\org\example\eiscuno\images" />
+       <recent name="C:\Users\fsvc1\Coding\eisc-uno\src" />
+     </key>
+   </component>
+-  <component name="RunManager">
++  <component name="RunManager" selected="JUnit.DeckTest">
+     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+       <option name="MAIN_CLASS_NAME" value="org.example.eiscuno.Main" />
+       <module name="eisc-uno" />
+@@ -114,8 +105,56 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
++    <configuration name="CardTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="eisc-uno" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="org.example.eiscuno.model.card.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="org.example.eiscuno.model.card" />
++      <option name="MAIN_CLASS_NAME" value="org.example.eiscuno.model.card.CardTest" />
++      <option name="TEST_OBJECT" value="class" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
++    <configuration name="DeckTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="eisc-uno" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="org.example.eiscuno.model.deck.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="org.example.eiscuno.model.deck" />
++      <option name="MAIN_CLASS_NAME" value="org.example.eiscuno.model.deck.DeckTest" />
++      <option name="TEST_OBJECT" value="class" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
++    <configuration name="GameHandlerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="eisc-uno" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="org.example.eiscuno.model.common.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <option name="PACKAGE_NAME" value="org.example.eiscuno.model.common" />
++      <option name="MAIN_CLASS_NAME" value="org.example.eiscuno.model.common.GameHandlerTest" />
++      <option name="TEST_OBJECT" value="class" />
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="JUnit.DeckTest" />
++        <item itemvalue="JUnit.GameHandlerTest" />
++        <item itemvalue="JUnit.CardTest" />
+         <item itemvalue="Application.Main" />
+       </list>
+     </recent_temporary>

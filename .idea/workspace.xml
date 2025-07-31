@@ -6,7 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-Stage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/ClickToContinueController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/ClickToContinueController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/HomeUnoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/HomeUnoController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/StartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/StartController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/common/PlayerStatsManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/common/PlayerStatsManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/table/Table.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/table/Table.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage$ClickToContinueHodler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage$ClickToContinueHodler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/ClickToContinueStage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage$StartHolder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage$StartHolder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/StartStage.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

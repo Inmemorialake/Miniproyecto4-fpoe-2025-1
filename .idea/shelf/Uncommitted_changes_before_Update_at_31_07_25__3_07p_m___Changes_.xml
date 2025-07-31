@@ -1,0 +1,19 @@
+<changelist name="Uncommitted_changes_before_Update_at_31_07_25,_3_07 p_ m__[Changes]" date="1753992437221" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_31_07_25,_3_07 p_ m__[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 31/07/25, 3:07 p. m. [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/org/example/eiscuno/model/common/GameState.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/org/example/eiscuno/model/game/IGameUno.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/org/example/eiscuno/model/game/GameUno.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/org/example/eiscuno/model/machine/ThreadPlayMachine.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="target/classes/org/example/eiscuno/model/machine/ThreadSingUNOMachine.class" />
+  </binary>
+</changelist>
