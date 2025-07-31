@@ -66,7 +66,6 @@ public class GameUnoController {
     public void initialize() {
         System.out.println("funka");
         initVariables();
-        setChooseColorHumanBehaviour();
         System.out.println("funka");
         printHumanPlayerCards();
         printMachinePlayerCards();
@@ -161,28 +160,6 @@ public class GameUnoController {
                     showInvalidMoveError();
                 }
             }
-        });
-    }
-
-    private void setChooseColorHumanBehaviour(){
-        gameHandler.setColorChooser(() -> {
-            final String[] selectedColor = new String[1];
-
-            Platform.runLater(() -> {
-                ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", Arrays.asList("ROJO", "VERDE", "AZUL", "AMARILLO"));
-                dialog.setTitle("Cambio de color");
-                dialog.setHeaderText(null);
-                dialog.setContentText("Elige el color para continuar:");
-
-                dialog.setOnHidden(event -> {
-                    GamePauseManager.getInstance().resumeGame();
-                });
-
-                dialog.showAndWait().ifPresent(color -> selectedColor[0] = COLOR_MAP.getOrDefault(color.toUpperCase(), color.toUpperCase()));
-            });
-            GamePauseManager.getInstance().pauseGame(); // Waza
-
-            return selectedColor[0] != null ? selectedColor[0] : "RED"; // fallback
         });
     }
 

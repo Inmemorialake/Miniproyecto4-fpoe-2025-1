@@ -1,6 +1,7 @@
 package org.example.eiscuno.model.common;
 
 import javafx.application.Platform;
+import javafx.scene.control.ChoiceDialog;
 import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.player.Player;
@@ -8,9 +9,8 @@ import org.example.eiscuno.model.table.Table;
 import org.example.eiscuno.view.DialogManager;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class GameHandler implements Serializable {
 
@@ -179,17 +179,33 @@ public class GameHandler implements Serializable {
                 GamePauseManager.getInstance().pauseGame();
             }
 
-            String newColor = "RED"; // por defecto
+            // Color aleatorio por defecto
+            String[] colors = {"RED", "GREEN", "BLUE", "YELLOW"};
+            String newColor = colors[new Random().nextInt(colors.length)];
 
-            if (playedByHuman && colorChooser != null) {
-                newColor = colorChooser.chooseColor(); // popup si es humano
-            } else {
-                // color aleatorio para IA
-                String[] colors = {"RED", "GREEN", "BLUE", "YELLOW"};
-                newColor = colors[new Random().nextInt(colors.length)];
+            final CountDownLatch latch = new CountDownLatch(1);
+            final String[] selectedColor = new String[1];
+
+            if (playedByHuman) {
+                Platform.runLater(() -> {
+                    ChoiceDialog<String> dialog = new ChoiceDialog<>("RED", Arrays.asList("RED", "GREEN", "BLUE", "YELLOW"));
+                    dialog.setTitle("Cambio de color");
+                    dialog.setHeaderText(null);
+                    dialog.setContentText("Elige el color para continuar:");
+
+                    dialog.setOnHidden(e -> {
+                        GamePauseManager.getInstance().resumeGame(); // 3. Reanudamos todos los hilos
+                        latch.countDown(); // liberamos este hilo
+                    });
+
+                    dialog.showAndWait().ifPresent(color -> {
+                        selectedColor[0] = color.toUpperCase();
+                    });
+                });
+                GamePauseManager.getInstance().pauseGame(); // Waza
             }
 
-            card.setColor(newColor);
+            card.setColor(selectedColor[0] != null? selectedColor[0] : newColor);
         } else if(card.isSkipOrReverse()) {
             DialogManager.showInfoDialog("Skip / Block jugado", "Se repite el turno!");
             GamePauseManager.getInstance().pauseGame();
