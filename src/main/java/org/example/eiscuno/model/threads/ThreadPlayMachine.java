@@ -9,13 +9,11 @@ import org.example.eiscuno.model.common.GamePauseManager;
 public class ThreadPlayMachine extends Thread {
     private final GameHandler gameHandler;
     private final ImageView tableImageView;
-    private final Runnable updateVisualsCallback; // <-- Nuevo callback
     private volatile boolean running = true;
 
-    public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView, Runnable updateVisualsCallback) {
+    public ThreadPlayMachine(GameHandler gameHandler, ImageView tableImageView) {
         this.gameHandler = gameHandler;
         this.tableImageView = tableImageView;
-        this.updateVisualsCallback = updateVisualsCallback;
     }
 
     @Override
@@ -38,14 +36,29 @@ public class ThreadPlayMachine extends Thread {
         Card cardToPlay = findPlayableCard(topCard);
 
         if (cardToPlay != null) {
-            playCard(cardToPlay);
+            gameHandler.playCard(gameHandler.getMachinePlayer(), cardToPlay);
+            gameHandler.applyCardEffectAndTurn(cardToPlay, false);
             gameHandler.checkWinner();
-        } else {
-            Card drawn = gameHandler.getDeck().takeCard();
-            gameHandler.getMachinePlayer().addCard(drawn);
 
-            Platform.runLater(updateVisualsCallback); // <-- Mostrar carta robada
-            gameHandler.passTurnToHuman();
+            Platform.runLater(() -> {
+                tableImageView.setImage(cardToPlay.getImage());
+                // No necesitas llamar a updateVisualCallback si ya lo hace GameHandler
+            });
+
+        } else {
+            // Solo roba carta si no puede jugar
+            gameHandler.eatCard(gameHandler.getMachinePlayer(), 1);
+
+            Card drawn = gameHandler.getLastCard(gameHandler.getMachinePlayer());
+            if (drawn.canBePlayedOn(topCard)) {
+                gameHandler.playCard(gameHandler.getMachinePlayer(), drawn);
+                gameHandler.applyCardEffectAndTurn(drawn, false);
+                gameHandler.checkWinner();
+
+                Platform.runLater(() -> tableImageView.setImage(drawn.getImage()));
+            } else {
+                gameHandler.passTurnToHuman(); // Sin carta jugable, pasa turno
+            }
         }
     }
 
@@ -56,18 +69,6 @@ public class ThreadPlayMachine extends Thread {
             }
         }
         return null;
-    }
-
-    private void playCard(Card card) {
-        GamePauseManager.getInstance().waitIfPaused();
-
-        gameHandler.playCard(gameHandler.getMachinePlayer(), card);
-        gameHandler.applyCardEffectAndTurn(card, false);
-
-        Platform.runLater(() -> {
-            tableImageView.setImage(card.getImage());
-            updateVisualsCallback.run(); // <-- Mostrar carta jugada
-        });
     }
 
     private void sleepSafely(long millis) {

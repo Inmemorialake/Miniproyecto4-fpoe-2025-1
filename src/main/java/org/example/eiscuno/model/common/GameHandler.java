@@ -217,6 +217,11 @@ public class GameHandler implements Serializable {
         return winner;
     }
 
+    public Card getLastCard(Player player) {
+        List<Card> cards = player.getCardsPlayer();
+        return cards.isEmpty() ? null : cards.get(cards.size() - 1);
+    }
+
     public Card getCurrentCardOnTable() {
         return table.getCurrentCardOnTheTable();
     }

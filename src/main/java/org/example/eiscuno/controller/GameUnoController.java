@@ -79,7 +79,7 @@ public class GameUnoController {
 
     public void startThreads() {
         threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));
-        threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView, this::updateVisuals);
+        threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView);
         treadGameOver = new ThreadGameOver(gameHandler);
         Thread u = new Thread(treadGameOver, "ThreadGameOver");
         u.start();
