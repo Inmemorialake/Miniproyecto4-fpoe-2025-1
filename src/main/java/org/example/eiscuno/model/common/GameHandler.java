@@ -156,20 +156,20 @@ public class GameHandler implements Serializable {
     public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {
         if (card.isPlusTwo()) {
             if (playedByHuman) {
-                eatCard(machinePlayer, 2);
+                machinePlayer.addCards(deck.takeCards(2));
             } else {
-                eatCard(humanPlayer, 2);
+                humanPlayer.addCards(deck.takeCards(2));
             }
 
             DialogManager.showInfoDialog("+2 Jugado", "Se repite el turno!");
             GamePauseManager.getInstance().pauseGame();
 
         } else if (card.isPlusFour() || card.isWildCard()) {
-            if (card.isPlusFour()) {
+            if(card.isPlusFour()) {
                 if (playedByHuman) {
-                    eatCard(machinePlayer, 4);
+                    machinePlayer.addCards(deck.takeCards(4));
                 } else {
-                    eatCard(humanPlayer, 4);
+                    humanPlayer.addCards(deck.takeCards(4));
                 }
 
                 DialogManager.showInfoDialog("+4 Jugado", "Se repite el turno!");
@@ -185,13 +185,13 @@ public class GameHandler implements Serializable {
             }
 
             card.setColor(newColor);
-
-        } else if (card.isSkipOrReverse()) {
+        } else if(card.isSkipOrReverse()) {
             DialogManager.showInfoDialog("Skip / Block jugado", "Se repite el turno!");
             GamePauseManager.getInstance().pauseGame();
         }
 
         if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {
+            // El jugador que juega se queda con el turno (reverse/skip/PlusSomething)
             isHumanTurn = playedByHuman;
         } else {
             isHumanTurn = !playedByHuman;
