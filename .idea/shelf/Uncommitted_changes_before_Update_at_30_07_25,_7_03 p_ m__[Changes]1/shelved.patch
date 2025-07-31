@@ -1,0 +1,146 @@
+Index: src/main/java/org/example/eiscuno/controller/GameUnoController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.eiscuno.controller;\n\nimport javafx.animation.Animation;\nimport javafx.animation.KeyFrame;\nimport javafx.animation.Timeline;\nimport javafx.application.Platform;\nimport javafx.event.ActionEvent;\nimport javafx.fxml.FXML;\nimport javafx.scene.control.Alert;\nimport javafx.scene.control.Button;\nimport javafx.scene.image.Image;\nimport javafx.scene.image.ImageView;\nimport javafx.scene.layout.GridPane;\nimport javafx.scene.control.ChoiceDialog;\nimport javafx.scene.control.Label;\nimport javafx.util.Duration;\nimport org.example.eiscuno.model.card.Card;\nimport org.example.eiscuno.model.common.GameHandler;\nimport org.example.eiscuno.model.common.GamePauseManager;\nimport org.example.eiscuno.model.common.PlayerStatsManager;\nimport org.example.eiscuno.model.machine.ThreadPlayMachine;\nimport org.example.eiscuno.model.machine.ThreadUnoCallout;\n\nimport java.io.*;\nimport java.util.Arrays;\nimport java.util.concurrent.CountDownLatch;\n\npublic class GameUnoController {\n\n    @FXML\n    private GridPane gridPaneCardsMachine;\n\n    @FXML\n    private GridPane gridPaneCardsPlayer;\n\n    @FXML\n    private ImageView tableImageView;\n\n    @FXML\n    private Label labelCurrentColor;\n\n    @FXML\n    private Button unoButton;\n\n    private GameHandler gameHandler;\n\n    private int posInitCardToShow = 0;\n\n    private ThreadUnoCallout threadUnoCallout;\n    private ThreadPlayMachine threadPlayMachine;\n\n    private final Object turnLock = new Object();\n    private boolean repeatTurn = false;\n\n    private static final java.util.Map<String, String> COLOR_MAP = new java.util.HashMap<>();\n    static {\n        COLOR_MAP.put(\"ROJO\", \"RED\");\n        COLOR_MAP.put(\"VERDE\", \"GREEN\");\n        COLOR_MAP.put(\"AZUL\", \"BLUE\");\n        COLOR_MAP.put(\"AMARILLO\", \"YELLOW\");\n        COLOR_MAP.put(\"RED\", \"RED\");\n        COLOR_MAP.put(\"GREEN\", \"GREEN\");\n        COLOR_MAP.put(\"BLUE\", \"BLUE\");\n        COLOR_MAP.put(\"YELLOW\", \"YELLOW\");\n    }\n\n    @FXML\n    public void initialize() {\n        System.out.println(\"funka\");\n        initVariables();\n        setChooseColorHumanBehaviour();\n        System.out.println(\"funka\");\n        printHumanPlayerCards();\n        printMachinePlayerCards();\n        System.out.println(\"funka\");\n        if (!gameHandler.getTable().getCards().isEmpty()) {\n            tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());\n            System.out.println(\"fakun\");\n        }\n        startThreads();\n        System.out.println(\"funka\");\n    }\n\n    public void startThreads() {\n        threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));\n        threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView, this::printMachinePlayerCards);\n        Thread t = new Thread(threadUnoCallout, \"ThreadSingUNO\");\n        t.start();\n        Thread s = new Thread(threadPlayMachine, \"ThreadPlayMachine\");\n        s.start();\n\n        Timeline unoCheckTimeline = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> checkUnoConditions()));\n        unoCheckTimeline.setCycleCount(Animation.INDEFINITE);\n        unoCheckTimeline.play();\n    }\n\n    private void initVariables() {\n        File saveFile = new File(PlayerStatsManager.getAppDataFolder(), \"savegame.dat\");\n\n        if (saveFile.exists()) {\n            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(saveFile))) {\n                this.gameHandler = (GameHandler) in.readObject();\n                restoreCardVisuals();\n                System.out.println(\"Partida cargada correctamente.\");\n            } catch (IOException | ClassNotFoundException e) {\n                e.printStackTrace();\n                System.out.println(\"Fallo al cargar partida, se crea una nueva.\");\n                createNewGame();\n            }\n        } else {\n            createNewGame();\n        }\n    }\n\n    private void createNewGame() {\n        this.gameHandler = GameHandler.createNewGame();\n    }\n\n    private void restoreCardVisuals() {\n        gameHandler.getHumanPlayer().getCardsPlayer().forEach(Card::restoreVisuals);\n        gameHandler.getMachinePlayer().getCardsPlayer().forEach(Card::restoreVisuals);\n        gameHandler.getTable().getCards().forEach(Card::restoreVisuals);\n        gameHandler.getDeck().getAllCards().forEach(Card::restoreVisuals);\n    }\n\n    public void printHumanPlayerCards() {\n        gridPaneCardsPlayer.getChildren().clear();\n        Card[] visibleCards = gameHandler.getCurrentVisibleCardsHumanPlayer(posInitCardToShow);\n\n        for (int i = 0; i < visibleCards.length; i++) {\n            Card card = visibleCards[i];\n            ImageView cardImageView = card.getCard();\n            attachClickHandlerToCard(card, cardImageView); // Mover comportamiento a una función aparte\n            gridPaneCardsPlayer.add(cardImageView, i, 0);\n        }\n\n        updateCurrentColorUI();\n    }\n\n    public void printMachinePlayerCards() {\n        gridPaneCardsMachine.getChildren().clear();\n        int numCards = gameHandler.getMachinePlayer().getCardsPlayer().size();\n        for (int i = 0; i < numCards; i++) {\n            ImageView cardBack = new ImageView(new Image(getClass().getResource(\"/org/example/eiscuno/cards-uno/card_uno.png\").toExternalForm()));\n            cardBack.setFitHeight(90);\n            cardBack.setFitWidth(70);\n            gridPaneCardsMachine.add(cardBack, i, 0);\n        }\n    }\n\n    private void attachClickHandlerToCard(Card card, ImageView cardImageView) {\n        cardImageView.setOnMouseClicked(event -> {\n            boolean wasPlayed = gameHandler.handleHumanCardClick(card, () -> {\n                tableImageView.setImage(card.getImage());\n                printHumanPlayerCards(); // actualizar visualmente\n                printMachinePlayerCards();\n                saveGame();\n            });\n\n            if (!wasPlayed) {\n                if (!gameHandler.getHumanTurn()) {\n                    showTurnError();\n                } else {\n                    showInvalidMoveError();\n                }\n            }\n        });\n    }\n\n    private void setChooseColorHumanBehaviour(){\n        gameHandler.setColorChooser(() -> {\n            final String[] selectedColor = new String[1];\n            CountDownLatch latch = new CountDownLatch(1);\n\n            Platform.runLater(() -> {\n                GamePauseManager.getInstance().pauseGame(); // si lo usas\n                ChoiceDialog<String> dialog = new ChoiceDialog<>(\"ROJO\", Arrays.asList(\"ROJO\", \"VERDE\", \"AZUL\", \"AMARILLO\"));\n                dialog.setTitle(\"Cambio de color\");\n                dialog.setHeaderText(null);\n                dialog.setContentText(\"Elige el color para continuar:\");\n\n                dialog.setOnHidden(event -> {\n                    GamePauseManager.getInstance().resumeGame();\n                });\n\n                dialog.showAndWait().ifPresent(color -> selectedColor[0] = COLOR_MAP.getOrDefault(color.toUpperCase(), color.toUpperCase()));\n                latch.countDown();\n            });\n\n            try {\n                latch.await(); // bloquea hasta que el usuario seleccione\n            } catch (InterruptedException e) {\n                e.printStackTrace();\n            }\n\n            return selectedColor[0] != null ? selectedColor[0] : \"RED\"; // fallback\n        });\n    }\n\n    @FXML\n    void onHandleTakeCard(ActionEvent event) {\n        if (!gameHandler.getHumanTurn()) {\n            showTurnError();\n            return;\n        }\n        if (gameHandler.hasPlayableCard(gameHandler.getHumanPlayer())) {\n            showInvalidTryToTakeCardError();\n            return;\n        }\n        gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);\n        printHumanPlayerCards();\n        gameHandler.passTurnToMachine();\n    }\n\n    @FXML\n    void onHandleUno(ActionEvent event) {\n        if (gameHandler.getHumanPlayer().getCardsPlayer().size() == 1 && !gameHandler.getHumanSaidUno()) {\n            gameHandler.setHumanSaidUno(true);\n            showAlert(\"UNO declarado\", \"¡Has declarado UNO correctamente!\");\n        } else if (gameHandler.getMachinePlayer().getCardsPlayer().size() == 1 && !gameHandler.getIASaidUno()) {\n            gameHandler.eatCard(gameHandler.getMachinePlayer(), 1);\n            showAlert(\"UNO callout a la máquina\", \"¡La máquina no dijo UNO! Le has hecho comer una carta.\");\n        }\n    }\n\n    private void updateCurrentColorUI() {\n        String color = gameHandler.getCurrentCardOnTable().getColor();\n        labelCurrentColor.setText(\"Color actual: \" + (color != null ? color : \"-\"));\n    }\n\n    private void startUnoTimerForHuman() {\n        new Thread(() -> {\n            try {\n                Thread.sleep(3000);\n            } catch (InterruptedException ignored) {}\n            if (!gameHandler.getHumanSaidUno() && gameHandler.getHumanPlayer().getCardsPlayer().size() == 1) {\n                Platform.runLater(() -> {\n                    showAlert(\"¡No dijiste UNO!\", \"La máquina notó que no dijiste UNO. Comes una carta.\");\n                    gameHandler.eatCard(gameHandler.getHumanPlayer(), 1);\n                    unoButton.setVisible(false);\n                    printHumanPlayerCards();\n                });\n            }\n        }).start();\n    }\n\n    private void checkUnoConditions() {\n        int humanCards = gameHandler.getHumanPlayer().getCardsPlayer().size();\n        int machineCards = gameHandler.getMachinePlayer().getCardsPlayer().size();\n\n        boolean shouldShowButton = (humanCards == 1 && !gameHandler.getHumanSaidUno()) ||\n                (machineCards == 1 && !gameHandler.getIASaidUno());\n\n        Platform.runLater(() -> unoButton.setVisible(shouldShowButton));\n\n        if (humanCards > 1 && gameHandler.getHumanSaidUno()) gameHandler.setHumanSaidUno(false);\n        if (machineCards > 1 && gameHandler.getIASaidUno()) gameHandler.setIASaidUno(false);\n    }\n\n    private void showTurnError() {\n        showAlert(\"Turno incorrecto\", \"No es tu turno. Espera a que la máquina juegue.\");\n    }\n\n    private void showInvalidMoveError() {\n        showAlert(\"Jugada inválida\", \"No puedes jugar esa carta. Debe coincidir en color, número o símbolo con la carta de la mesa.\");\n    }\n\n    private void showInvalidTryToTakeCardError(){\n        showAlert(\"Intento inválido\", \"No puedes tomar una carta si tienes cartas jugables. Juega una carta primero.\");\n    }\n\n    private void showAlert(String title, String content) {\n        Alert alert = new Alert(Alert.AlertType.INFORMATION);\n        alert.setTitle(title);\n        alert.setHeaderText(null);\n        alert.setContentText(content);\n        alert.showAndWait();\n    }\n\n    public void saveGame() {\n        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(PlayerStatsManager.getAppDataFolder() + \"/savegame.dat\"))) {\n            out.writeObject(gameHandler);\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    /**\n     * Handles the \"Back\" button action to show the previous set of cards.\n     *\n     * @param event the action event\n     */\n    @FXML\n    void onHandleBack(ActionEvent event) {\n        if (this.posInitCardToShow > 0) {\n            this.posInitCardToShow--;\n            printHumanPlayerCards();\n        }\n    }\n\n    /**\n     * Handles the \"Next\" button action to show the next set of cards.\n     *\n     * @param event the action event\n     */\n    @FXML\n    void onHandleNext(ActionEvent event) {\n        if (this.posInitCardToShow < gameHandler.getHumanPlayer().getCardsPlayer().size() - 4) {\n            this.posInitCardToShow++;\n            printHumanPlayerCards();\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/eiscuno/controller/GameUnoController.java b/src/main/java/org/example/eiscuno/controller/GameUnoController.java
+--- a/src/main/java/org/example/eiscuno/controller/GameUnoController.java	(revision 2017ae11cf7666986461a748b97c4c03dc919574)
++++ b/src/main/java/org/example/eiscuno/controller/GameUnoController.java	(date 1753917232382)
+@@ -18,8 +18,8 @@
+ import org.example.eiscuno.model.common.GameHandler;
+ import org.example.eiscuno.model.common.GamePauseManager;
+ import org.example.eiscuno.model.common.PlayerStatsManager;
+-import org.example.eiscuno.model.machine.ThreadPlayMachine;
+-import org.example.eiscuno.model.machine.ThreadUnoCallout;
++import org.example.eiscuno.model.threads.ThreadPlayMachine;
++import org.example.eiscuno.model.threads.ThreadUnoCallout;
+ 
+ import java.io.*;
+ import java.util.Arrays;
+Index: src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java b/src/main/java/org/example/eiscuno/model/threads/ThreadUnoCallout.java
+rename from src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java
+rename to src/main/java/org/example/eiscuno/model/threads/ThreadUnoCallout.java
+--- a/src/main/java/org/example/eiscuno/model/machine/ThreadUnoCallout.java	(revision 2017ae11cf7666986461a748b97c4c03dc919574)
++++ b/src/main/java/org/example/eiscuno/model/threads/ThreadUnoCallout.java	(date 1753917232399)
+@@ -1,4 +1,4 @@
+-package org.example.eiscuno.model.machine;
++package org.example.eiscuno.model.threads;
+ 
+ import javafx.application.Platform;
+ import javafx.scene.control.Alert;
+Index: src/main/java/org/example/eiscuno/model/common/GameHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.eiscuno.model.common;\n\nimport javafx.application.Platform;\nimport org.example.eiscuno.model.card.Card;\nimport org.example.eiscuno.model.deck.Deck;\nimport org.example.eiscuno.model.player.Player;\nimport org.example.eiscuno.model.table.Table;\n\nimport java.io.Serializable;\nimport java.util.ArrayList;\nimport java.util.List;\nimport java.util.Random;\n\npublic class GameHandler implements Serializable {\n\n    private final Player humanPlayer;\n    private final Player machinePlayer;\n    private final Deck deck;\n    private final Table table;\n\n    private boolean iaSaidUno;\n    private boolean isHumanTurn;\n    private boolean humanSaidUno;\n    private boolean gameEnded;\n\n    private transient ColorChooser colorChooser;\n\n    public GameHandler(Player human, Player machine, Deck deck, Table table,\n                       boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {\n        this.humanPlayer = human;\n        this.machinePlayer = machine;\n        this.deck = deck;\n        this.table = table;\n        this.iaSaidUno = iaSaidUno;\n        this.isHumanTurn = isHumanTurn;\n        this.humanSaidUno = humanSaidUno;\n        this.gameEnded = false;\n    }\n\n    public static GameHandler createNewGame() {\n        Player human = new Player(\"HUMAN_PLAYER\");\n        Player machine = new Player(\"MACHINE_PLAYER\");\n        Deck deck = new Deck();\n        Table table = new Table();\n        GameHandler handler = new GameHandler(human, machine, deck, table, false, true, false);\n        handler.startGame();\n        return handler;\n    }\n\n    public void startGame() {\n        for (int i = 0; i < 10; i++) {\n            if (i < 5) {\n                humanPlayer.addCard(deck.takeCard());\n            } else {\n                machinePlayer.addCard(deck.takeCard());\n            }\n        } //Sexo anal\n\n        // Seleccionar carta inicial que no sea especial\n        Card initialCard;\n        do {\n            initialCard = deck.takeCard();\n        } while (initialCard.isSpecial());\n        table.addCardOnTheTable(initialCard);\n    }\n\n    public void eatCard(Player player, int numberOfCards) {\n        for (int i = 0; i < numberOfCards; i++) {\n            try {\n                player.addCard(deck.takeCard());\n            } catch (IllegalStateException e) {\n                // Si el mazo está vacío, lo rellenamos con las cartas en uso\n                List<Card> inUse = new ArrayList<>();\n                inUse.addAll(humanPlayer.getCardsPlayer());\n                inUse.addAll(machinePlayer.getCardsPlayer());\n                deck.refillDeck(inUse);\n                player.addCard(deck.takeCard());\n            }\n        }\n    }\n\n    public void haveSungUno(String playerWhoSang) {\n        if (\"HUMAN_PLAYER\".equals(playerWhoSang)) {\n            machinePlayer.addCard(deck.takeCard());\n        } else {\n            humanPlayer.addCard(deck.takeCard());\n        }\n    }\n\n    public boolean handleHumanCardClick(Card card, Runnable onFinish) {\n        if (!isHumanTurn) {\n            return false; // para que el controlador sepa si fue un movimiento válido\n        }\n\n        if (!card.canBePlayedOn(getCurrentCardOnTable())) {\n            return false;\n        }\n\n        playCard(humanPlayer, card);\n        PlayerStatsManager.updateStats(false, 1, true);\n\n        applyCardEffectAndTurn(card, true);\n\n        checkWinner();\n\n        // Verificar UNO\n        if (humanPlayer.getCardsPlayer().size() == 1 && !humanSaidUno) {\n            // lanzar temporizador si no dijo UNO\n            new Thread(() -> {\n                try {\n                    Thread.sleep(3000);\n                    if (!humanSaidUno && humanPlayer.getCardsPlayer().size() == 1) {\n                        eatCard(humanPlayer, 1);\n                    }\n                } catch (InterruptedException ignored) {}\n            }).start();\n        }\n\n        if (!card.isSkipOrReverse() && !card.isPlusTwo() && !card.isPlusFour()) {\n            // Si no es una carta especial, pasamos el turno a la máquina\n            passTurnToMachine();\n        }\n\n        if (onFinish != null) {\n            Platform.runLater(onFinish);\n        }\n\n        return true;\n    }\n\n    public Card[] getCurrentVisibleCardsHumanPlayer(int posInitCardToShow) {\n        int totalCards = humanPlayer.getCardsPlayer().size();\n        int numVisibleCards = Math.min(4, totalCards - posInitCardToShow);\n        Card[] cards = new Card[numVisibleCards];\n        for (int i = 0; i < numVisibleCards; i++) {\n            cards[i] = humanPlayer.getCard(posInitCardToShow + i);\n        }\n        return cards;\n    }\n\n    public boolean hasPlayableCard(Player player) {\n        Card topCard = table.getCurrentCardOnTheTable();\n        for (Card card : player.getCardsPlayer()) {\n            if (card.canBePlayedOn(topCard)) {\n                return true;\n            }\n        }\n        return false;\n    }\n\n    public void playCard(Player player, Card card) {\n        table.addCardOnTheTable(card);\n        player.getCardsPlayer().remove(card);\n    }\n\n    public void applyCardEffectAndTurn(Card card, boolean playedByHuman) {\n        if (card.isPlusTwo()) {\n            if (playedByHuman) {\n                machinePlayer.addCards(deck.takeCards(2));\n            } else {\n                humanPlayer.addCards(deck.takeCards(2));\n            }\n        } else if (card.isPlusFour() || card.isWildCard()) {\n            String newColor = \"RED\"; // por defecto\n\n            if (playedByHuman && colorChooser != null) {\n                newColor = colorChooser.chooseColor(); // popup si es humano\n            } else {\n                // color aleatorio para IA\n                String[] colors = {\"RED\", \"GREEN\", \"BLUE\", \"YELLOW\"};\n                newColor = colors[new Random().nextInt(colors.length)];\n            }\n\n            card.setColor(newColor);\n        }\n\n        if (card.isSkipOrReverse() || card.isPlusTwo() || card.isPlusFour()) {\n            // El jugador que juega se queda con el turno (reverse/skip/PlusSomething)\n            isHumanTurn = playedByHuman;\n        } else {\n            isHumanTurn = !playedByHuman;\n        }\n    }\n\n    public void setColorChooser(ColorChooser colorChooser) {\n        this.colorChooser = colorChooser;\n    }\n\n    public void checkWinner() {\n        if (humanPlayer.getCardsPlayer().isEmpty() || machinePlayer.getCardsPlayer().isEmpty()) {\n            gameEnded = true;\n        }\n    }\n\n    public Card getCurrentCardOnTable() {\n        return table.getCurrentCardOnTheTable();\n    }\n\n    public Player getHumanPlayer() {\n        return humanPlayer;\n    }\n\n    public Player getMachinePlayer() {\n        return machinePlayer;\n    }\n\n    public Deck getDeck() {\n        return deck;\n    }\n\n    public Table getTable() {\n        return table;\n    }\n\n    public boolean getIASaidUno() {\n        return iaSaidUno;\n    }\n\n    public void setIASaidUno(boolean iaSaidUno) {\n        this.iaSaidUno = iaSaidUno;\n    }\n\n    public boolean getHumanSaidUno() {\n        return humanSaidUno;\n    }\n\n    public void setHumanSaidUno(boolean humanSaidUno) {\n        this.humanSaidUno = humanSaidUno;\n    }\n\n    public boolean getHumanTurn() {\n        return isHumanTurn;\n    }\n\n    public void passTurnToHuman() {\n        isHumanTurn = true;\n    }\n\n    public void passTurnToMachine() {\n        isHumanTurn = false;\n    }\n\n    public boolean isGameEnded() {\n        return gameEnded;\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/eiscuno/model/common/GameHandler.java b/src/main/java/org/example/eiscuno/model/common/GameHandler.java
+--- a/src/main/java/org/example/eiscuno/model/common/GameHandler.java	(revision 2017ae11cf7666986461a748b97c4c03dc919574)
++++ b/src/main/java/org/example/eiscuno/model/common/GameHandler.java	(date 1753918194107)
+@@ -23,10 +23,11 @@
+     private boolean humanSaidUno;
+     private boolean gameEnded;
+ 
++    private String winner;
++
+     private transient ColorChooser colorChooser;
+ 
+-    public GameHandler(Player human, Player machine, Deck deck, Table table,
+-                       boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {
++    public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {
+         this.humanPlayer = human;
+         this.machinePlayer = machine;
+         this.deck = deck;
+@@ -35,6 +36,7 @@
+         this.isHumanTurn = isHumanTurn;
+         this.humanSaidUno = humanSaidUno;
+         this.gameEnded = false;
++        this.winner = null;
+     }
+ 
+     public static GameHandler createNewGame() {
+@@ -186,10 +188,19 @@
+         this.colorChooser = colorChooser;
+     }
+ 
+-    public void checkWinner() {
+-        if (humanPlayer.getCardsPlayer().isEmpty() || machinePlayer.getCardsPlayer().isEmpty()) {
++    public String checkWinner() {
++        if (humanPlayer.getCardsPlayer().isEmpty()) {
++            gameEnded = true;
++            winner = "HUMAN";
++            PlayerStatsManager.updateStats(true, 0, false);
++        } else if (machinePlayer.getCardsPlayer().isEmpty()) {
+             gameEnded = true;
++            winner = "MACHINE";
++            PlayerStatsManager.updateStats(false, 0, false);
++        } else {
++            winner = null; // No hay ganador aún
+         }
++        return winner;
+     }
+ 
+     public Card getCurrentCardOnTable() {
+Index: src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java b/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java
+rename from src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java
+rename to src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java
+--- a/src/main/java/org/example/eiscuno/model/machine/ThreadPlayMachine.java	(revision 2017ae11cf7666986461a748b97c4c03dc919574)
++++ b/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java	(date 1753918276017)
+@@ -1,4 +1,4 @@
+-package org.example.eiscuno.model.machine;
++package org.example.eiscuno.model.threads;
+ 
+ import javafx.application.Platform;
+ import javafx.scene.control.Alert;
+Index: src/main/java/org/example/eiscuno/model/threads/ThreadGameOver.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/eiscuno/model/threads/ThreadGameOver.java b/src/main/java/org/example/eiscuno/model/threads/ThreadGameOver.java
+new file mode 100644
+--- /dev/null	(date 1753920224238)
++++ b/src/main/java/org/example/eiscuno/model/threads/ThreadGameOver.java	(date 1753920224238)
+@@ -0,0 +1,29 @@
++package org.example.eiscuno.model.threads;
++
++import javafx.application.Platform;
++import javafx.scene.control.Alert;
++import javafx.scene.control.ButtonType;
++import org.example.eiscuno.model.common.GameHandler;
++
++import java.util.Optional;
++
++public class ThreadGameOver extends Thread {
++
++    private final GameHandler gameHandler;
++
++    public ThreadGameOver(GameHandler gameHandler) {
++        this.gameHandler = gameHandler;
++    }
++
++    @Override
++    public void run() {
++        while (!gameHandler.isGameEnded()) {
++            try {
++                Thread.sleep(500);
++            } catch (InterruptedException ignored) {
++                Thread.currentThread().interrupt();
++            }
++        }
++
++    }
++}

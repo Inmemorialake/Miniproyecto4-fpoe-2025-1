@@ -1,8 +1,7 @@
-package org.example.eiscuno.model.machine;
+package org.example.eiscuno.model.threads;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import org.example.eiscuno.model.common.DialogManager;
+import org.example.eiscuno.view.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 

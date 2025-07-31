@@ -5,6 +5,7 @@ import org.example.eiscuno.model.card.Card;
 import org.example.eiscuno.model.deck.Deck;
 import org.example.eiscuno.model.player.Player;
 import org.example.eiscuno.model.table.Table;
+import org.example.eiscuno.view.DialogManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,10 +24,11 @@ public class GameHandler implements Serializable {
     private boolean humanSaidUno;
     private boolean gameEnded;
 
+    private String winner;
+
     private transient ColorChooser colorChooser;
 
-    public GameHandler(Player human, Player machine, Deck deck, Table table,
-                       boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {
+    public GameHandler(Player human, Player machine, Deck deck, Table table, boolean iaSaidUno, boolean isHumanTurn, boolean humanSaidUno) {
         this.humanPlayer = human;
         this.machinePlayer = machine;
         this.deck = deck;
@@ -35,6 +37,7 @@ public class GameHandler implements Serializable {
         this.isHumanTurn = isHumanTurn;
         this.humanSaidUno = humanSaidUno;
         this.gameEnded = false;
+        this.winner = null;
     }
 
     public static GameHandler createNewGame() {
@@ -204,10 +207,19 @@ public class GameHandler implements Serializable {
         this.colorChooser = colorChooser;
     }
 
-    public void checkWinner() {
-        if (humanPlayer.getCardsPlayer().isEmpty() || machinePlayer.getCardsPlayer().isEmpty()) {
+    public String checkWinner() {
+        if (humanPlayer.getCardsPlayer().isEmpty()) {
             gameEnded = true;
+            winner = "HUMAN";
+            PlayerStatsManager.updateStats(true, 0, false);
+        } else if (machinePlayer.getCardsPlayer().isEmpty()) {
+            gameEnded = true;
+            winner = "MACHINE";
+            PlayerStatsManager.updateStats(false, 0, false);
+        } else {
+            winner = null; // No hay ganador aún
         }
+        return winner;
     }
 
     public Card getCurrentCardOnTable() {

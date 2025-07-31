@@ -1,4 +1,4 @@
-package org.example.eiscuno.model.machine;
+package org.example.eiscuno.model.threads;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;

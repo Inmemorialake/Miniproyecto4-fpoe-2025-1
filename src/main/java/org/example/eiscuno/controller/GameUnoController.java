@@ -1,26 +1,22 @@
 package org.example.eiscuno.controller;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
-import javafx.util.Duration;
 import org.example.eiscuno.model.card.Card;
-import org.example.eiscuno.model.common.DialogManager;
+import org.example.eiscuno.model.threads.ThreadGameOver;
+import org.example.eiscuno.view.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 import org.example.eiscuno.model.common.PlayerStatsManager;
-import org.example.eiscuno.model.machine.ThreadPlayMachine;
-import org.example.eiscuno.model.machine.ThreadUnoCallout;
+import org.example.eiscuno.model.threads.ThreadPlayMachine;
+import org.example.eiscuno.model.threads.ThreadUnoCallout;
 
 import java.io.*;
 import java.util.Arrays;
@@ -49,6 +45,7 @@ public class GameUnoController {
 
     private ThreadUnoCallout threadUnoCallout;
     private ThreadPlayMachine threadPlayMachine;
+    private ThreadGameOver treadGameOver;
 
     private final Object turnLock = new Object();
     private boolean repeatTurn = false;
@@ -85,6 +82,9 @@ public class GameUnoController {
     public void startThreads() {
         threadUnoCallout = new ThreadUnoCallout(gameHandler, visible -> unoButton.setVisible(visible));
         threadPlayMachine = new ThreadPlayMachine(gameHandler, tableImageView, this::printMachinePlayerCards);
+        treadGameOver = new ThreadGameOver(gameHandler);
+        Thread u = new Thread(treadGameOver, "ThreadGameOver");
+        u.start();
         Thread t = new Thread(threadUnoCallout, "ThreadSingUNO");
         t.start();
         Thread s = new Thread(threadPlayMachine, "ThreadPlayMachine");

@@ -1,8 +1,9 @@
-package org.example.eiscuno.model.common;
+package org.example.eiscuno.view;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceDialog;
+import org.example.eiscuno.model.common.GamePauseManager;
 
 import java.util.List;
 import java.util.function.Consumer;
