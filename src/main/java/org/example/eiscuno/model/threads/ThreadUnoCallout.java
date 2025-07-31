@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.threads;
 
+// Imports
 import javafx.application.Platform;
 import org.example.eiscuno.view.DialogManager;
 import org.example.eiscuno.model.common.GameHandler;
@@ -8,19 +9,33 @@ import org.example.eiscuno.model.common.GamePauseManager;
 import java.util.Random;
 import java.util.function.Consumer;
 
+/**
+ * ThreadUnoCallout is a thread that monitors the game state to handle the UNO callout for both human and AI players.
+ * It shows a button for the UNO callout when a player has only one card left and has not called UNO yet.
+ * If the player fails to call UNO in time, they receive a penalty.
+ */
 public class ThreadUnoCallout extends Thread {
     private final GameHandler gameHandler;
-    private final Consumer<Boolean> showUnoButtonCallback; // true = mostrar, false = ocultar
+    private final Consumer<Boolean> showUnoButtonCallback; // true = show button, false = hide button
     private volatile boolean running = true;
 
     private boolean humanUnoHandled = false;
     private boolean iaUnoHandled = false;
 
+    /**
+     * Constructor for ThreadUnoCallout.
+     * @param gameHandler The GameHandler instance that manages the game state.
+     * @param showUnoButtonCallback A callback to show or hide the UNO button.
+     */
     public ThreadUnoCallout(GameHandler gameHandler, Consumer<Boolean> showUnoButtonCallback) {
         this.gameHandler = gameHandler;
         this.showUnoButtonCallback = showUnoButtonCallback;
     }
 
+    /*
+    * This method is called when the thread starts.
+    * It continuously checks the number of cards each player has and whether they have called UNO.
+    * */
     @Override
     public void run() {
         while (running) {
@@ -29,7 +44,7 @@ public class ThreadUnoCallout extends Thread {
             int humanCards = gameHandler.getHumanPlayer().getCardsPlayer().size();
             int iaCards = gameHandler.getMachinePlayer().getCardsPlayer().size();
 
-            // RESET FLAGS si ya no tienen una sola carta
+            // Reset the UNO callout flags if the number of cards is greater than 1
             if (humanCards > 1) {
                 gameHandler.setHumanSaidUno(false);
                 humanUnoHandled = false;
@@ -40,12 +55,12 @@ public class ThreadUnoCallout extends Thread {
                 iaUnoHandled = false;
             }
 
-            //Escondemos el boton si no se cumplen las condiciones para mostrarlo (hay mejores maneras, pero solo se me ocurre esta por el momento xd)
+            // Hide the UNO button if neither player has only one card left or has called UNO
             if(!(humanCards == 1 && !gameHandler.getHumanSaidUno()) && !(iaCards == 1 && !gameHandler.getIASaidUno())){
                 Platform.runLater(() -> showUnoButtonCallback.accept(false));
             }
 
-            // --- HUMANO ---
+            // --- HUMAN ---
             if (humanCards == 1 && !gameHandler.getHumanSaidUno() && !humanUnoHandled) {
                 humanUnoHandled = true;
                 Platform.runLater(() -> showUnoButtonCallback.accept(true));
@@ -63,7 +78,7 @@ public class ThreadUnoCallout extends Thread {
                 }).start();
             }
 
-            // --- IA ---
+            // --- AI ---
             if (iaCards == 1 && !gameHandler.getIASaidUno() && !iaUnoHandled) {
                 iaUnoHandled = true;
                 Platform.runLater(() -> showUnoButtonCallback.accept(true));
@@ -88,6 +103,10 @@ public class ThreadUnoCallout extends Thread {
         }
     }
 
+    /**
+     * Stops the thread by setting the running flag to false.
+     * This will cause the run method to exit its loop and terminate the thread.
+     */
     public void stopThread() {
         running = false;
     }

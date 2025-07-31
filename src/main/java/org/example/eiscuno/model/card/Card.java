@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.card;
 
+// Imports
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -42,20 +43,11 @@ public class Card implements Serializable {
         return card;
     }
 
-    /**
-     * Gets the ImageView representation of the card.
-     *
-     * @return the ImageView of the card
-     */
     public ImageView getCard() {
         return cardImageView;
     }
 
-    /**
-     * Gets the image of the card.
-     *
-     * @return the Image of the card
-     */
+
     public Image getImage() {
         return image;
     }
@@ -68,6 +60,12 @@ public class Card implements Serializable {
         return color;
     }
 
+    /**
+     * Checks if the card can be played on top of the given card.
+     *
+     * @param topCard the card on top of which this card is being played
+     * @return true if this card can be played on top of the given card, false otherwise
+     */
     public boolean canBePlayedOn(Card topCard) {
         try {
             // Wild card and +4 can always be played
@@ -99,60 +97,101 @@ public class Card implements Serializable {
         }
     }
 
+    /**
+     * Checks if the card is a reverse card.
+     */
     public boolean isReverse() {
         String urlLower = this.url.toLowerCase();
         return urlLower.contains("reverse");
     }
 
+    /**
+     * Checks if the card is a skip card.
+     */
     public boolean isSkip(){
         String urlLower = this.url.toLowerCase();
         return urlLower.contains("skip");
     }
 
+    /**
+     * Checks if the card is a skip or reverse card.
+     * This method returns true if the card is either a skip or reverse card.
+     */
     public boolean isSkipOrReverse(){
         return (this.isSkip() || this.isReverse());
     }
 
-    // Métodos auxiliares para identificar tipos de carta
+    /**
+     * Checks if the card is a wild card.
+     * A wild card is a special card that can be played at any time.
+     *
+     * @return true if the card is a wild card, false otherwise
+     */
     public boolean isWildCard() {
-        // Comodín clásico (wild sin color)
         return this.url.endsWith("wild.png");
     }
+
+    /**
+     * Checks if the card is a wild card that can change the color.
+     * This includes both the classic wild card and the +4 wild card.
+     *
+     * @return true if the card is a wild card that can change the color, false otherwise
+     */
     public boolean isPlusFour() {
-        // +4
         return this.url.contains("4_wild_draw");
     }
+
+    /**
+     * Checks if the card is a +2 wild card.
+     * This includes wild cards that draw two cards.
+     *
+     * @return true if the card is a +2 wild card, false otherwise
+     */
     public boolean isPlusTwo() {
-        // +2
         return this.url.contains("2_wild_draw");
     }
+
+    /**
+     * Checks if the card is a colored wild card.
+     * This includes wild cards that are colored (e.g., wild_draw_blue, wild_draw_red, etc.)
+     * but not the classic +4 wild card or the classic wild card.
+     */
     public boolean isColoredWild() {
-        // Comodines de color (wild_draw_blue, wild_draw_red, etc.) que no sean +4 ni wild clásico
         return this.isPlusTwo() && this.color != null;
     }
+
+    /**
+     * Checks if the card is a change color card.
+     * This method returns true if the card is a wild card that can change the color.
+     * This includes both the classic wild card and the +4 wild card.
+     * @return true if the card is a change color card, false otherwise
+     */
     public boolean isChangeColor() {
-        // Cambio de color (comodín de color, si existiera otro)
-        return isWildCard(); // En este UNO, el comodín es el cambio de color
+        return isWildCard();
     }
 
+    /**
+     * Checks if the card is a special card.
+     * Special cards include wild cards, +2, +4, skip, and reverse cards.
+     *
+     * @return true if the card is a special card, false otherwise
+     */
     public boolean isSpecial() {
-        // Consideramos especiales: comodines, +2, +4, cambio de color, ceder turno
-        // Comodines: color BLACK o valor null
         if ("BLACK".equalsIgnoreCase(this.color)) {
             return true;
         }
-        // +2 y +4
+
         if ("2".equals(this.value) && this.url.contains("wild_draw")) {
             return true;
         }
         if ("4".equals(this.value) && this.url.contains("wild_draw")) {
             return true;
         }
-        // Cambio de color (comodín)
+
         if (this.url.contains("wild")) {
             return true;
         }
-        // Ceder turno (skip o reverse)
+
         String urlLower = this.url.toLowerCase();
         if (urlLower.contains("skip") || urlLower.contains("reverse")) {
             return true;
@@ -164,11 +203,21 @@ public class Card implements Serializable {
         return url;
     }
 
+    /**
+     * Restores the visuals of the card.
+     * This method is used to recreate the Image and ImageView after serialization.
+     */
     public void restoreVisuals() {
         this.image = new Image(String.valueOf(getClass().getResource(url)));
         this.cardImageView = createCardImageView();
     }
 
+    /**
+     * Sets the color of the card.
+     * If the provided color is null or empty, it defaults to "BLACK" for wild cards.
+     *
+     * @param orDefault the color to set, or null/empty to use default
+     */
     public void setColor(String orDefault) {
         if (orDefault == null || orDefault.isEmpty()) {
             this.color = "BLACK"; // Default color for wild cards

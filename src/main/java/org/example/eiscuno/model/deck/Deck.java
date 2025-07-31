@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.deck;
 
+// Imports
 import org.example.eiscuno.model.unoenum.EISCUnoEnum;
 import org.example.eiscuno.model.card.Card;
 
@@ -55,17 +56,19 @@ public class Deck implements Serializable {
     }
 
     /**
-     * Devuelve todas las cartas actualmente en el mazo (para restaurarlas al cargar una partida).
+     * Returns a list of all cards in the deck.
+     * @return a list of all cards.
      */
     public List<Card> getAllCards() {
         return new ArrayList<>(deckOfCards);
     }
 
     /**
-     * Reemplaza el mazo con todas las cartas posibles menos las que están en uso.
-     * @param excluded las cartas que NO deben incluirse (cartas en mano y en mesa).
+     * Replenishes the deck with cards, excluding specified cards.
+     * @param excluded a list of cards to exclude from the replenishment.
      */
     public void refillDeck(List<Card> excluded) {
+        System.out.println("Estamos reponiendo el mazo");
         Set<String> excludedUrls = excluded.stream()
                 .map(Card::getUrl)
                 .collect(Collectors.toSet());
@@ -94,6 +97,10 @@ public class Deck implements Serializable {
         Collections.shuffle(deckOfCards);
     }
 
+    /**
+     * Returns the number of cards in the deck.
+     * @return the size of the deck.
+     */
     private String getCardValue(String name) {
         if (name.endsWith("0")){
             return "0";
@@ -121,6 +128,11 @@ public class Deck implements Serializable {
 
     }
 
+    /**
+     * Returns the color of the card based on its name.
+     * @param name the name of the card.
+     * @return the color of the card.
+     */
     private String getCardColor(String name){
         if(name.contains("GREEN")){
             return "GREEN";
