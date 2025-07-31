@@ -1,47 +1,63 @@
 package org.example.eiscuno.model.threads;
 
+// Imports
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.example.eiscuno.model.common.GameHandler;
 import org.example.eiscuno.model.common.GamePauseManager;
 import org.example.eiscuno.model.common.GameSaver;
 import org.example.eiscuno.model.common.PlayerStatsManager;
-import org.example.eiscuno.view.DialogManager;
 
-import java.io.File;
-
+/**
+ * ThreadGameOver is a thread that monitors the game state and displays a message when the game ends.
+ * It checks for the game status every 500 milliseconds and shows an alert with the result.
+ */
 public class ThreadGameOver extends Thread {
 
     private final GameHandler gameHandler;
     private volatile boolean running = true;
 
+    /**
+     * Constructor for ThreadGameOver.
+     * @param gameHandler The GameHandler instance that manages the game state.
+     */
     public ThreadGameOver(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
     }
 
+    /**
+     * Stops the thread gracefully.
+     * This method sets the running flag to false and interrupts the thread if it is sleeping.
+     */
     public void stopThread() {
         running = false;
-        this.interrupt(); // por si está en sleep
+        this.interrupt(); // In case the thread is sleeping, we interrupt it to wake it up
     }
 
+    /**
+     * Runs the thread, checking the game state periodically.
+     * If the game has ended, it displays an alert with the result.
+     */
     @Override
     public void run() {
         while (running && !gameHandler.isGameEnded()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                // Si interrumpido, revisamos si debemos seguir
+                // If the thread is interrupted, we check if we should stop running
                 if (!running) return;
-                Thread.currentThread().interrupt(); // restauramos estado
+                Thread.currentThread().interrupt(); // Re-interrupt the thread to maintain the interrupted status
             }
         }
 
-        if (!running) return; // Salimos si nos pidieron detener el hilo
+        if (!running) return; // Exit if the thread has been stopped
 
-        // Mensajes según resultado
+        // Message variables for the alert
         String title, message;
 
+        // Determine the winner and prepare the alert message
         switch (gameHandler.checkWinner()) {
+            // "HUMAN" for human player, "MACHINE" for AI player, or null if no winner
             case "HUMAN":
                 title = "¡Has ganado!";
                 message = "¡Felicidades! Has ganado el juego.";
@@ -61,6 +77,8 @@ public class ThreadGameOver extends Thread {
                 break;
         }
 
+        // Display the alert on the JavaFX Application Thread
+        // This is necessary because JavaFX UI components must be accessed on the JavaFX Application Thread
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(title);

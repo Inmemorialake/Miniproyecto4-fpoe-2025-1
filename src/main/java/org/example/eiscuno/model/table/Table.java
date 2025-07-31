@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.table;
 
+// Imports
 import org.example.eiscuno.model.card.Card;
 
 import java.io.Serializable;

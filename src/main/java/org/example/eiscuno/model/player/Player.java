@@ -1,5 +1,6 @@
 package org.example.eiscuno.model.player;
 
+// Imports
 import org.example.eiscuno.model.card.Card;
 
 import java.io.Serializable;
@@ -61,10 +62,20 @@ public class Player implements IPlayer, Serializable {
         return cardsPlayer.get(index);
     }
 
+    /**
+     * Returns the type of player (e.g., "human", "computer").
+     * @return The type of player as a String.
+     */
     public String getTypePlayer() {
         return typePlayer;
     }
 
+    /**
+     * Adds cards to the player's hand.
+     * This method can accept either a single Card object or an ArrayList of Card objects.
+     *
+     * @param o The card(s) to be added, either a single Card or an ArrayList of Cards.
+     */
     public void addCards(Object o) {
         if (o instanceof ArrayList) {
             ArrayList<Card> cards = (ArrayList<Card>) o;
