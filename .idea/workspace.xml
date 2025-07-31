@@ -4,14 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Saves moved to a new class to separate responsability">
+    <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadGameOver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadGameOver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/view/GameUnoStage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/eiscuno/game-uno-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/eiscuno/game-uno-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/deck/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/deck/Deck.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/GameUnoController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/controller/GameUnoController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/game-uno-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/game-uno-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/card/Card.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/deck/Deck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/model/player/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage$GameUnoStageHolder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/eiscuno/view/GameUnoStage.class" afterDir="false" />
     </list>
-    <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,8 +27,8 @@
         <option value="JavaFXApplication" />
         <option value="Enum" />
         <option value="CSS File" />
-        <option value="FxmlFile" />
         <option value="Interface" />
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
@@ -36,6 +40,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -46,7 +51,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Inmemorialake/Miniproyecto4-fpoe-2025-1.git&quot;,
-    &quot;accountId&quot;: &quot;a62c2782-9bde-4235-982b-f23d796ac6bc&quot;
+    &quot;accountId&quot;: &quot;fe153e98-5a37-464f-8220-7a779a70e686&quot;
   }
 }</component>
   <component name="MavenImportPreferences">
@@ -74,7 +79,7 @@
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Gerardo&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Consequences&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/jpjda/Downloads/eisc-uno&quot;,
@@ -84,7 +89,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -119,8 +124,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
       </set>
     </attachedChunks>
   </component>
@@ -160,7 +165,6 @@
       <workItem from="1753223210888" duration="9303000" />
       <workItem from="1753820690118" duration="14462000" />
       <workItem from="1753837844032" duration="14646000" />
-      <workItem from="1753902616059" duration="10261000" />
     </task>
     <task id="LOCAL-00001" summary="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management">
       <option name="closed" value="true" />
@@ -170,55 +174,7 @@
       <option name="project" value="LOCAL" />
       <updated>1753835670115</updated>
     </task>
-    <task id="LOCAL-00002" summary="IA now follow the rules like a good citizen instead of playing all his cards at once xD">
-      <option name="closed" value="true" />
-      <created>1753915711943</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1753915711943</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Pusheenlo!!!">
-      <option name="closed" value="true" />
-      <created>1753919665707</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1753919665707</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Minitonteto funcional despues de refactor">
-      <option name="closed" value="true" />
-      <created>1753929807620</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1753929807620</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Refactor de la clase threadPlayMachine">
-      <option name="closed" value="true" />
-      <created>1753931812102</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1753931812102</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Logica de la seleccion de color del wild ahora bien dividida">
-      <option name="closed" value="true" />
-      <created>1753932255264</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1753932255264</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Saves moved to a new class to separate responsability">
-      <option name="closed" value="true" />
-      <created>1753933143776</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1753933143776</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -226,16 +182,16 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management" />
-    <MESSAGE value="IA now follow the rules like a good citizen instead of playing all his cards at once xD" />
-    <MESSAGE value="Pusheenlo!!!" />
-    <MESSAGE value="Minitonteto funcional despues de refactor" />
-    <MESSAGE value="Refactor de la clase threadPlayMachine" />
-    <MESSAGE value="Logica de la seleccion de color del wild ahora bien dividida" />
-    <MESSAGE value="Saves moved to a new class to separate responsability" />
-    <option name="LAST_COMMIT_MESSAGE" value="Saves moved to a new class to separate responsability" />
+    <option name="LAST_COMMIT_MESSAGE" value="Multiple fixes and implementations&#10;UNO! callout now functional&#10;Win / Loose function as also&#10;First implementation of Player Stats Management" />
   </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="THREAD" type="java-exception">
+          <properties class="java.lang.IllegalStateException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
