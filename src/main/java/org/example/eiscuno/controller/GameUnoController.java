@@ -20,6 +20,7 @@ import org.example.eiscuno.model.threads.ThreadUnoCallout;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class GameUnoController {
@@ -64,17 +65,13 @@ public class GameUnoController {
 
     @FXML
     public void initialize() {
-        System.out.println("funka");
         initVariables();
-        System.out.println("funka");
+        gameHandler.setColorChooser(this::showColorDialog); // Le pasamos al gameHandler la funcion para que el usuario pueda elegir un color
         updateVisuals();
-        System.out.println("funka");
         if (!gameHandler.getTable().getCards().isEmpty()) {
             tableImageView.setImage(gameHandler.getCurrentCardOnTable().getImage());
-            System.out.println("fakun");
         }
         startThreads();
-        System.out.println("funka");
     }
 
     public void startThreads() {
@@ -168,6 +165,23 @@ public class GameUnoController {
                 }
             }
         });
+    }
+
+    private String showColorDialog() {
+        final String[] selectedColor = new String[1];
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", List.of("ROJO", "VERDE", "AZUL", "AMARILLO"));
+        dialog.setTitle("Cambio de color");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Elige un color:");
+
+        dialog.setOnHidden(e -> GamePauseManager.getInstance().resumeGame());
+
+        dialog.showAndWait().ifPresent(color -> {
+            selectedColor[0] = COLOR_MAP.getOrDefault(color.toUpperCase(), "RED");
+        });
+
+        return selectedColor[0] != null ? selectedColor[0] : "RED"; // fallback
     }
 
     @FXML

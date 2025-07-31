@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Minitonteto funcional despues de refactor">
+    <list default="true" id="1ee8ff40-bbdd-4aec-a3d2-cf5cc45130ec" name="Changes" comment="Refactor de la clase threadPlayMachine">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/controller/GameUnoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/common/GameHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/eiscuno/model/threads/ThreadPlayMachine.java" afterDir="false" />
     </list>
     <list id="58c79a61-e838-4612-9472-683cdd46782a" name="Changes by conseq" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -193,7 +192,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753929807620</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Refactor de la clase threadPlayMachine">
+      <option name="closed" value="true" />
+      <created>1753931812102</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1753931812102</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -204,7 +211,8 @@
     <MESSAGE value="IA now follow the rules like a good citizen instead of playing all his cards at once xD" />
     <MESSAGE value="Pusheenlo!!!" />
     <MESSAGE value="Minitonteto funcional despues de refactor" />
-    <option name="LAST_COMMIT_MESSAGE" value="Minitonteto funcional despues de refactor" />
+    <MESSAGE value="Refactor de la clase threadPlayMachine" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor de la clase threadPlayMachine" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

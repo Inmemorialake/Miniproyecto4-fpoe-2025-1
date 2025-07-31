@@ -165,26 +165,11 @@ public class GameHandler implements Serializable {
             String[] colors = {"RED", "GREEN", "BLUE", "YELLOW"};
             String newColor = colors[new Random().nextInt(colors.length)];
 
-            final CountDownLatch latch = new CountDownLatch(1);
-            final String[] selectedColor = new String[1];
-
             if (playedByHuman) {
-                ChoiceDialog<String> dialog = new ChoiceDialog<>("RED", Arrays.asList("RED", "GREEN", "BLUE", "YELLOW"));
-                dialog.setTitle("Cambio de color");
-                dialog.setHeaderText(null);
-                dialog.setContentText("Elige el color para continuar:");
-
-                dialog.setOnHidden(e -> {
-                    GamePauseManager.getInstance().resumeGame(); // 3. Reanudamos todos los hilos
-                    latch.countDown(); // liberamos este hilo
-                });
-
-                dialog.showAndWait().ifPresent(color -> {
-                    selectedColor[0] = color.toUpperCase();
-                });
+                newColor = colorChooser.chooseColor();
             }
 
-            card.setColor(selectedColor[0] != null? selectedColor[0] : newColor);
+            card.setColor(newColor);
         } else if(card.isSkipOrReverse()) {
             DialogManager.showInfoDialog("Skip / Block jugado", "Se repite el turno!");
             GamePauseManager.getInstance().pauseGame();
