@@ -4,9 +4,11 @@ package org.example.eiscuno.view;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * StartStage is a JavaFX Stage that represents the initial screen of the Uno game.
@@ -33,6 +35,11 @@ public class StartStage extends Stage {
         setTitle("1"); // Sets the title of the stage
         setScene(scene); // Sets the scene for the stage
         setResizable(false); // Disallows resizing of the stage
+        
+        // Agregar favicon
+        Image icon = new Image(Objects.requireNonNull(getClass().getResource("/org/example/eiscuno/favicon.png")).toExternalForm());
+        getIcons().add(icon);
+        
         show(); // Displays the stage
     }
 
