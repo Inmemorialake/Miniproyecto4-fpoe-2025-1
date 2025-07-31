@@ -49,12 +49,7 @@ public class ThreadPlayMachine extends Thread {
             gameHandler.getMachinePlayer().addCard(drawn);
 
             Platform.runLater(updateMachineCardsCallback); // <-- Mostrar carta robada
-
-            if (drawn.canBePlayedOn(topCard)) {
-                playCard(drawn);
-            } else {
-                gameHandler.passTurnToHuman();
-            }
+            gameHandler.passTurnToHuman();
         }
     }
 

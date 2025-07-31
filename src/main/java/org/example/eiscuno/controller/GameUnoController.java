@@ -167,7 +167,6 @@ public class GameUnoController {
     private void setChooseColorHumanBehaviour(){
         gameHandler.setColorChooser(() -> {
             final String[] selectedColor = new String[1];
-            CountDownLatch latch = new CountDownLatch(1);
 
             Platform.runLater(() -> {
                 ChoiceDialog<String> dialog = new ChoiceDialog<>("ROJO", Arrays.asList("ROJO", "VERDE", "AZUL", "AMARILLO"));
@@ -180,16 +179,8 @@ public class GameUnoController {
                 });
 
                 dialog.showAndWait().ifPresent(color -> selectedColor[0] = COLOR_MAP.getOrDefault(color.toUpperCase(), color.toUpperCase()));
-                latch.countDown();
             });
-
-            GamePauseManager.getInstance().pauseGame(); // si lo usas
-
-            try {
-                latch.await(); // bloquea hasta que el usuario seleccione
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            GamePauseManager.getInstance().pauseGame(); // Waza
 
             return selectedColor[0] != null ? selectedColor[0] : "RED"; // fallback
         });
